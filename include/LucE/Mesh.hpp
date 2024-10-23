@@ -16,9 +16,9 @@ class Mesh
 {
     public:
         unsigned int VAO;
-        Mesh(const float* vertices, const unsigned int vsize, const unsigned int* indices, const unsigned int isize);
+        Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize);
         void draw(Shader &shader);
     private:
-        void constructMesh();
+        unsigned int elementCount;
 };
 #endif
