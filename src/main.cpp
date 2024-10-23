@@ -1,5 +1,6 @@
 #include <glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <LucE/Shader.hpp>
 #include <LucE/Mesh.hpp>
 
@@ -51,25 +52,20 @@ int main()
 
     // object vertices
     // ---------------
-    float triangleVertices[]{
-        -0.5f, -0.5f, 1.0f,
-        0.0f, 0.5f, 1.0f,
-        0.5f, -0.5f, 1.0f
+    Vertex triangleVertices[]{
+        Vertex{glm::vec3(-0.5f, -0.5f, 1.0f), glm::vec3(1.0f)},
+        Vertex{glm::vec3(0.0f, 0.5f, 1.0f), glm::vec3(1.0f)},
+        Vertex{glm::vec3(0.5f, -0.5f, 1.0f), glm::vec3(1.0f)}
+    };
+    // object indices
+    // --------------
+    unsigned int triangleIndices[]{
+        0, 1, 2
     };
 
     // object config
     // -------------
-    unsigned int triangleVAO, triangleVBO;
-    glGenVertexArrays(1, &triangleVAO);
-    glBindVertexArray(triangleVAO);
-    glGenBuffers(1, &triangleVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), &triangleVertices, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, (void*)0);
-
-    glBindVertexArray(0);
+    Mesh triangle = Mesh(triangleVertices, sizeof(triangleVertices), triangleIndices, sizeof(triangleIndices));
 
     glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
     // render loop
@@ -84,9 +80,8 @@ int main()
         // -------------
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.use();
-        glBindVertexArray(triangleVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        triangle.draw(shader);
+        
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
