@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.5.0)
+project(translucency_engine VERSION 0.1.0 LANGUAGES C CXX)
+cmake_policy(SET CMP0027 NEW) 
+set(OpenGL_GL_PREFERENCE GLVND)
+
+set(LIB_DIR "/path/to/libraries")
+
+include_directories(
+    "include"
+    "${LIB_DIR}/assimp/include"
+    "${LIB_DIR}/glad/include"
+)
+
+add_library(assimp SHARED IMPORTED)
+add_library(glad STATIC IMPORTED)
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${LIB_DIR}/assimp/bin/libassimp.so")
+set_target_properties(glad PROPERTIES IMPORTED_LOCATION "${LIB_DIR}/glad/bin/gladlib.a")
+
+# find libraries
+find_package(OpenGL REQUIRED)
+
+add_executable(translucency_engine 
+    "src/main.cpp"
+)
+
+target_link_libraries(
+    translucency_engine 
+    glad
+    glfw
+    OpenGL::GL
+    assimp
+)
