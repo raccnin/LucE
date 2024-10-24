@@ -1,9 +1,11 @@
+#include <LucE/Camera.hpp>
+#include <LucE/Shader.hpp>
+#include <LucE/Mesh.hpp>
+
 #include <glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <LucE/Shader.hpp>
-#include <LucE/Mesh.hpp>
 
 #include <iostream>
 
@@ -125,11 +127,10 @@ int main()
 
     // camera config
     // -------------
-    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 cameraPos = glm::vec3(2.0f);
-    glm::vec3 cameraDir = glm::normalize(cameraPos - glm::vec3(0.0f));
-    glm::vec3 cameraRight = glm::normalize(glm::cross(cameraDir, worldUp));
-    glm::vec3 cameraUp = glm::cross(cameraRight, cameraDir);
+    glm::vec3 cameraTarget = glm::vec3(0.0f);
+    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    Camera camera(cameraPos, worldUp, cameraTarget);
 
     // shader config
     // -------------
@@ -137,7 +138,7 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     shader.setuMat4("model", model);
 
-    glm::mat4 view = glm::lookAt(cameraPos, glm::vec3(0.0f), cameraUp);
+    glm::mat4 view = camera.getViewMatrix();
     shader.setuMat4("view", view);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
