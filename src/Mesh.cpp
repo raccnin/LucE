@@ -7,7 +7,7 @@ Mesh::Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsign
 {
     // need indices length for drawing
     // -------------------------------
-    this->elementCount = isize / sizeof(indices[0]);
+    this->elementCount = isize / sizeof(unsigned int);
 
     // bind and fill buffers
     // ---------------------
