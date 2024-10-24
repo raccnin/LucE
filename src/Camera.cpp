@@ -36,7 +36,7 @@ void Camera::setPos(glm::vec3 worldPos)
 
 void Camera::updateVectors()
 {
-    front = glm::normalize(worldPos - targetPos);
-    right = glm::cross(worldUp, front);
+    glm::vec3 front = glm::normalize(worldPos - targetPos);
+    glm::vec3 right = glm::cross(worldUp, front);
     up = glm::cross(front, right);
 }

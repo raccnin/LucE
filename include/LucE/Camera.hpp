@@ -13,11 +13,10 @@ class Camera
         void setPos(glm::vec3 worldPos);
 
     private:
+    
         glm::vec3 worldPos;
         glm::vec3 targetPos;
         glm::vec3 worldUp;
-        glm::vec3 front;
-        glm::vec3 right;
         glm::vec3 up;
         void updateVectors();
 };
