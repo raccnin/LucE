@@ -15,6 +15,7 @@ class Shader
         unsigned int ID;
         unsigned int compileShader(const char* path, GLenum shaderType);
         void checkCompileError(GLuint shaderID, GLenum shaderType);
+        void checkCompileError(GLuint shaderID);
 };
 
 #endif

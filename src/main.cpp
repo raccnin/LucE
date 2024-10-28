@@ -55,7 +55,8 @@ int main()
 
     // compile shader programs
     // -----------------------
-    Shader shader = Shader("/home/shalash/Repos/Diss24/engine/src/shaders/shader3D_base.vs", "/home/shalash/Repos/Diss24/engine/src/shaders/shader3D_base.fs");
+    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
 
     // object vertices
     // ---------------
