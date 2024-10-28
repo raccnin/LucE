@@ -3,11 +3,12 @@
 
 
 
-Mesh::Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize)
+Mesh::Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize, GLenum primType /* default GL_TRIANGLES */)
 {
     // need indices length for drawing
     // -------------------------------
     this->elementCount = isize / sizeof(unsigned int);
+    this->primType = primType;
 
     // bind and fill buffers
     // ---------------------
@@ -39,6 +40,6 @@ void Mesh::draw(Shader &shader)
 {
     shader.use();
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(primType, elementCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
