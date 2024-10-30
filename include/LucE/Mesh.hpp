@@ -16,9 +16,10 @@ class Mesh
 {
     public:
         unsigned int VAO;
-        Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize);
+        Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize, GLenum primType = GL_TRIANGLES);
         void draw(Shader &shader);
     private:
         unsigned int elementCount;
+        GLenum primType;
 };
 #endif

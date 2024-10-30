@@ -16,6 +16,18 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+// timing
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+// camera
+Camera camera(glm::vec3(2.0f));
+
+// mouse data
+float lastX = 0.0f;
+float lastY = 0.0f;
+bool firstMouse = true;
+
 int main()
 {
     // glfw: initialize and configure
@@ -51,11 +63,12 @@ int main()
 
     // OpenGL global states
     // --------------------
-
+    glEnable(GL_DEPTH_TEST);
 
     // compile shader programs
     // -----------------------
-    Shader shader = Shader("/home/shalash/Repos/Diss24/engine/src/shaders/shader3D_base.vs", "/home/shalash/Repos/Diss24/engine/src/shaders/shader3D_base.fs");
+    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
 
     // object vertices
     // ---------------
@@ -105,10 +118,18 @@ int main()
         Vertex{glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f)}
     };
 
+    Vertex vecVertices[] = {
+        Vertex{glm::vec3(0.0f), glm::vec3(1.0f)},
+        Vertex{glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f)}
+    };
+
     // object indices
     // --------------
     unsigned int triangleIndices[]{
         0, 1, 2
+    };
+    unsigned int vecIndices[]{
+        0, 1
     };
     // rudimentary implementation, TODO: remove
     unsigned int cubeIndices[36];
@@ -122,15 +143,10 @@ int main()
     
     // object config
     // -------------
-    Mesh triangle = Mesh(triangleVertices, sizeof(triangleVertices), triangleIndices, sizeof(triangleIndices));
-    Mesh cube = Mesh(cubeVertices, sizeof(cubeVertices), cubeIndices, sizeof(cubeIndices));
+    Mesh triangle(triangleVertices, sizeof(triangleVertices), triangleIndices, sizeof(triangleIndices));
+    Mesh cube(cubeVertices, sizeof(cubeVertices), cubeIndices, sizeof(cubeIndices));
+    Mesh unitVector(vecVertices, sizeof(vecVertices), vecIndices, sizeof(vecIndices), GL_LINE_STRIP);
 
-    // camera config
-    // -------------
-    glm::vec3 cameraPos = glm::vec3(2.0f);
-    glm::vec3 cameraTarget = glm::vec3(0.0f);
-    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-    Camera camera(cameraPos, worldUp, cameraTarget);
 
     // shader config
     // -------------
@@ -144,6 +160,8 @@ int main()
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
     shader.setuMat4("projection", projection);
 
+    glm::vec3 aVec(3.0f);
+
     glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
     // render loop
     // -----------
@@ -153,12 +171,29 @@ int main()
         // -----
         processInput(window);
 
+        // per frame time logic
+        // --------------------
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         // clear buffers
         // -------------
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        model = glm::mat4(1.0f);
+        shader.setuMat4("model", model);
+        shader.setuVec3("aColor", glm::vec3(0.4, 0.0, 0.7));
         cube.draw(shader);
-        
+
+        /*
+        model = glm::mat4(1.0f);
+        model = glm::scale(model, aVec);
+        shader.setuMat4("model", model);
+        shader.setuVec3("aColor", glm::vec3(0.0f));
+        unitVector.draw(shader);
+        */
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

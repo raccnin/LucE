@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <iostream>
+
 // public
 // ------
 
@@ -36,7 +38,7 @@ void Camera::setPos(glm::vec3 worldPos)
 
 void Camera::updateVectors()
 {
-    glm::vec3 front = glm::normalize(worldPos - targetPos);
-    glm::vec3 right = glm::cross(worldUp, front);
+    front = glm::normalize(worldPos - targetPos);
+    right = glm::cross(worldUp, front);
     up = glm::cross(front, right);
 }
