@@ -3,6 +3,7 @@
 
 #include <LucE/Shader.hpp>
 #include <glm/glm.hpp>
+#include <vector>
 
 using namespace std;
 
@@ -10,16 +11,27 @@ struct Vertex
 {
     glm::vec3 position;
     glm::vec3 normal;
+    glm::vec2 texCoord;
+};
+
+struct Texture
+{
+    unsigned int id;
+    string type;
 };
 
 class Mesh
 {
     public:
-        unsigned int VAO;
-        Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize, GLenum primType = GL_TRIANGLES);
+        vector<Vertex> vertices;
+        vector<unsigned int> indices;
+        vector<Texture> textures;
+
+        Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
         void draw(Shader &shader);
+
     private:
-        unsigned int elementCount;
-        GLenum primType;
+        unsigned int VAO, VBO, EBO;
+        void setupMesh();
 };
 #endif

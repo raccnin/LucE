@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <vector>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -70,96 +71,41 @@ int main()
     // compile shader programs
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
+    Shader shader = Shader((shaderDir+"/base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
 
     // object vertices
     // ---------------
-    Vertex triangleVertices[]{
-        Vertex{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(0.0f, 0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f)}
+    std::vector<Vertex> triangleVertices = {
+        Vertex{glm::vec3(-0.5f, -0.5f, 0.0f),glm::vec3(1.0f), glm::vec2(1.0f)},
+        Vertex{glm::vec3(0.0f, 0.5f, -0.5f), glm::vec3(1.0f), glm::vec2(1.0f)},
+        Vertex{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f), glm::vec2(1.0f)}
     };
 
-    Vertex cubeVertices[] = {
-        // positions       
-        Vertex{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f)}
-    };
-
-    Vertex vecVertices[] = {
-        Vertex{glm::vec3(0.0f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f)}
-    };
 
     // object indices
     // --------------
-    unsigned int triangleIndices[]{
+    std::vector<unsigned int> triangleIndices = {
         0, 1, 2
     };
-    unsigned int vecIndices[]{
-        0, 1
+
+    // object textures
+    std::vector<Texture> triangleTextures= {
+        Texture{0 , "texture_diffuse"}
     };
-    // rudimentary implementation, TODO: remove
-    unsigned int cubeIndices[36];
-    for (unsigned int i = 0; i < 36; i++)
-    {
-        cubeIndices[i] = i;
-    }
 
     // object config
     // -------------
-    Mesh triangle(triangleVertices, sizeof(triangleVertices), triangleIndices, sizeof(triangleIndices));
-    Mesh cube(cubeVertices, sizeof(cubeVertices), cubeIndices, sizeof(cubeIndices));
-    Mesh unitVector(vecVertices, sizeof(vecVertices), vecIndices, sizeof(vecIndices), GL_LINE_STRIP);
+    Mesh triangle(triangleVertices,triangleIndices,triangleTextures);
 
 
 
     // shader config
     // -------------
-    //glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-
     glm::mat4 model = glm::mat4(1.0f);
-    //glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(model));
 
     glm::mat4 view = camera.getViewMatrix();
-    //glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
-    //glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(projection));
     glm::mat4 mats[] = {model, view, projection};
 
     UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
@@ -184,15 +130,9 @@ int main()
         // -------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        model = glm::mat4(1.0f);
-        Matrices.fillIdx(MODEL, model);
-        shader.setuVec3("aColor", glm::vec3(0.4, 0.0, 0.7));
-        cube.draw(shader);
-
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 2.0f));
-        Matrices.fillIdx(MODEL, model);
-        shader.setuVec3("aColor", glm::vec3(0.0f, 1.0f, 0.0f));
-        cube.draw(shader);
+        shader.use();
+        shader.setuVec3("aColor", glm::vec3(0.0f, 0.5f, 0.5f));
+        triangle.draw(shader);
 
         /*
         model = glm::mat4(1.0f);
