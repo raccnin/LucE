@@ -1,6 +1,7 @@
 #include <LucE/Camera.hpp>
 #include <LucE/Shader.hpp>
 #include <LucE/Mesh.hpp>
+#include <LucE/Model.hpp>
 #include <LucE/Buffers.hpp>
 
 #include <glad.h>
@@ -71,7 +72,7 @@ int main()
     // compile shader programs
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
 
     // object vertices
     // ---------------
@@ -95,7 +96,8 @@ int main()
 
     // object config
     // -------------
-    Mesh triangle(triangleVertices,triangleIndices,triangleTextures);
+    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    Model cube((objDir + "/cube/cube.obj"));
 
 
 
@@ -132,8 +134,7 @@ int main()
 
         shader.use();
         shader.setuVec3("aColor", glm::vec3(0.0f, 0.5f, 0.5f));
-        triangle.draw(shader);
-
+        cube.draw(shader);
         /*
         model = glm::mat4(1.0f);
         model = glm::scale(model, aVec);

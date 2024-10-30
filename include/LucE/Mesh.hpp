@@ -5,8 +5,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-using namespace std;
-
 struct Vertex
 {
     glm::vec3 position;
@@ -17,17 +15,18 @@ struct Vertex
 struct Texture
 {
     unsigned int id;
-    string type;
+    std::string type;
+    std::string path;
 };
 
 class Mesh
 {
     public:
-        vector<Vertex> vertices;
-        vector<unsigned int> indices;
-        vector<Texture> textures;
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+        std::vector<Texture> textures;
 
-        Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
         void draw(Shader &shader);
 
     private:
