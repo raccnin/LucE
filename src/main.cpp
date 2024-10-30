@@ -20,6 +20,14 @@ const unsigned int SCR_HEIGHT = 600;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+// camera
+Camera camera(glm::vec3(2.0f));
+
+// mouse data
+float lastX = 0.0f;
+float lastY = 0.0f;
+bool firstMouse = true;
+
 int main()
 {
     // glfw: initialize and configure
@@ -139,13 +147,7 @@ int main()
     Mesh cube(cubeVertices, sizeof(cubeVertices), cubeIndices, sizeof(cubeIndices));
     Mesh unitVector(vecVertices, sizeof(vecVertices), vecIndices, sizeof(vecIndices), GL_LINE_STRIP);
 
-    // camera config
-    // -------------
-    glm::vec3 cameraPos = glm::vec3(2.0f);
-    glm::vec3 cameraTarget = glm::vec3(0.0f);
-    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-    //Camera camera(cameraPos, worldUp, cameraTarget);
-    OrbitalCamera camera(10.0f);
+
     // shader config
     // -------------
     shader.use();
@@ -179,18 +181,19 @@ int main()
         // -------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shader.setuMat4("view", camera.getViewMatrix());
-
         model = glm::mat4(1.0f);
         shader.setuMat4("model", model);
         shader.setuVec3("aColor", glm::vec3(0.4, 0.0, 0.7));
         cube.draw(shader);
 
+        /*
+        model = glm::mat4(1.0f);
         model = glm::scale(model, aVec);
         shader.setuMat4("model", model);
         shader.setuVec3("aColor", glm::vec3(0.0f));
         unitVector.draw(shader);
-        
+        */
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

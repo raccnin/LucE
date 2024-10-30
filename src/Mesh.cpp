@@ -2,7 +2,6 @@
 #include <glm/glm.hpp>
 
 
-
 Mesh::Mesh(Vertex vertices[], unsigned int vsize, unsigned int indices[], unsigned int isize, GLenum primType /* default GL_TRIANGLES */)
 {
     // need indices length for drawing
