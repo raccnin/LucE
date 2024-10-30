@@ -12,6 +12,7 @@ class Shader
         void use();
         void setuMat4(const std::string &name, const glm::mat4 &mat);
         void setuVec3(const std::string &name, const glm::vec3 &vec);
+        void setBlockBinding(const std::string &name, const unsigned int bindIndex);
     private:
         unsigned int ID;
         unsigned int compileShader(const char* path, GLenum shaderType);

@@ -1,11 +1,13 @@
 #include <LucE/Camera.hpp>
 #include <LucE/Shader.hpp>
 #include <LucE/Mesh.hpp>
+#include <LucE/Buffers.hpp>
 
 #include <glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -21,7 +23,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(2.0f));
+Camera camera(glm::vec3(5.0f));
 
 // mouse data
 float lastX = 0.0f;
@@ -138,9 +140,6 @@ int main()
         cubeIndices[i] = i;
     }
 
-    // define uniform buffers
-    // ----------------------
-    
     // object config
     // -------------
     Mesh triangle(triangleVertices, sizeof(triangleVertices), triangleIndices, sizeof(triangleIndices));
@@ -148,19 +147,23 @@ int main()
     Mesh unitVector(vecVertices, sizeof(vecVertices), vecIndices, sizeof(vecIndices), GL_LINE_STRIP);
 
 
+
     // shader config
     // -------------
-    shader.use();
+    //glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+
     glm::mat4 model = glm::mat4(1.0f);
-    shader.setuMat4("model", model);
+    //glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(model));
 
     glm::mat4 view = camera.getViewMatrix();
-    shader.setuMat4("view", view);
+    //glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
-    shader.setuMat4("projection", projection);
+    //glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(projection));
+    glm::mat4 mats[] = {model, view, projection};
 
-    glm::vec3 aVec(3.0f);
+    UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
+    shader.setBlockBinding(Matrices.name, Matrices.bindIdx);
 
     glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
     // render loop
@@ -182,8 +185,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         model = glm::mat4(1.0f);
-        shader.setuMat4("model", model);
+        Matrices.fillIdx(MODEL, model);
         shader.setuVec3("aColor", glm::vec3(0.4, 0.0, 0.7));
+        cube.draw(shader);
+
+        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 2.0f));
+        Matrices.fillIdx(MODEL, model);
+        shader.setuVec3("aColor", glm::vec3(0.0f, 1.0f, 0.0f));
         cube.draw(shader);
 
         /*
