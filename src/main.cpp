@@ -77,9 +77,9 @@ int main()
     // object vertices
     // ---------------
     std::vector<Vertex> triangleVertices = {
-        Vertex{glm::vec3(-0.5f, -0.5f, 0.0f),glm::vec3(1.0f), glm::vec2(1.0f)},
-        Vertex{glm::vec3(0.0f, 0.5f, -0.5f), glm::vec3(1.0f), glm::vec2(1.0f)},
-        Vertex{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f), glm::vec2(1.0f)}
+        Vertex{glm::vec3(-0.5f, -0.5f, 0.0f),glm::vec3(1.0f)},
+        Vertex{glm::vec3(0.0f, 0.5f, -0.5f), glm::vec3(1.0f)},
+        Vertex{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f)}
     };
 
 
@@ -97,7 +97,7 @@ int main()
     // object config
     // -------------
     std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    Model cube((objDir + "/cube/cube.obj"));
+    Model backpack((objDir + "/cube/cube.obj"));
 
 
 
@@ -134,7 +134,7 @@ int main()
 
         shader.use();
         shader.setuVec3("aColor", glm::vec3(0.0f, 0.5f, 0.5f));
-        cube.draw(shader);
+        backpack.draw(shader);
         /*
         model = glm::mat4(1.0f);
         model = glm::scale(model, aVec);
