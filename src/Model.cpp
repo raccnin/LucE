@@ -3,6 +3,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
 #include <vector>
 #include <string>
@@ -10,10 +12,27 @@
 
 void Model::draw(Shader &shader)
 {
+    shader.use();
+
+    // set material uniforms
+    shader.setVec3("material.ambient", material.ambient);
+    shader.setVec3("material.diffuse", material.diffuse);
+    shader.setVec3("material.specular", material.specular);
+    shader.setFloat("material.shininess", material.shininess);
+
+    // get model matrix
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, worldPos);
+    model = glm::scale(model, scale);
+    model = glm::rotate(model, glm::radians(orientAngle), orientAxis);
+    shader.setMat4("model", model);
+
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
         meshes[i].draw(shader);
     }
+
+    glUseProgram(0);
 }
         
 void Model::loadModel(std::string path)

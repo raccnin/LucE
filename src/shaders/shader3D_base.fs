@@ -1,8 +1,14 @@
 #version 330
+struct Material
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
 
 out vec4 FragColor;
 
-uniform vec3 aColor;
+uniform Material material;
 
 in VS_OUT {
     vec3 FragPos;
@@ -12,5 +18,5 @@ in VS_OUT {
 
 void main()
 {
-    FragColor = vec4(aColor, 1.0);
+    FragColor = vec4(material.diffuse, 1.0);
 }

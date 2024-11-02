@@ -95,12 +95,12 @@ void Shader::use()
     glUseProgram(ID);
 }
 
-void Shader::setuMat4(const std::string &name, const glm::mat4 &mat)
+void Shader::setMat4(const std::string &name, const glm::mat4 &mat)
 {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader::setuVec3(const std::string &name, const glm::vec3 &value)
+void Shader::setVec3(const std::string &name, const glm::vec3 &value)
 { 
     glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]); 
 }
