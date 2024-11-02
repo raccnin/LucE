@@ -97,7 +97,8 @@ int main()
     // object config
     // -------------
     std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    Model backpack((objDir + "/cube/cube.obj"));
+    Material cubeMat = {glm::vec3(0.0f, 0.5f, 0.5f)};
+    Model cube((objDir + "/cube/cube.obj"), cubeMat);
 
 
 
@@ -108,7 +109,7 @@ int main()
     glm::mat4 view = camera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
-    glm::mat4 mats[] = {model, view, projection};
+    glm::mat4 mats[] = {view, projection};
 
     UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
     shader.setBlockBinding(Matrices.name, Matrices.bindIdx);
@@ -132,9 +133,7 @@ int main()
         // -------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shader.use();
-        shader.setuVec3("aColor", glm::vec3(0.0f, 0.5f, 0.5f));
-        backpack.draw(shader);
+        cube.draw(shader);
         /*
         model = glm::mat4(1.0f);
         model = glm::scale(model, aVec);

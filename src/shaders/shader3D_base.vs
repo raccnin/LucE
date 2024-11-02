@@ -5,10 +5,10 @@ layout (location = 0) in vec2 aTexcoord;
 
 layout (std140) uniform Matrices
 {
-    mat4 model;
     mat4 view;
     mat4 projection;
 };
+uniform mat4 model;
 
 out VS_OUT {
     vec3 FragPos;
