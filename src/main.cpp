@@ -27,10 +27,9 @@ float lastFrame = 0.0f;
 // camera
 Camera camera(glm::vec3(-2.0f, 3.0, 3.0f));
 
-// mouse data
-float lastX = 0.0f;
-float lastY = 0.0f;
-bool firstMouse = true;
+// input data
+bool rotatingLight = false;
+
 
 int main()
 {
@@ -132,6 +131,10 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        float time = glfwGetTime();
+        if (rotatingLight)
+            light.position = glm::vec3(sin(time), 3.0f, cos(time));
+
         // clear buffers
         // -------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -164,6 +167,8 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        rotatingLight = !rotatingLight;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
