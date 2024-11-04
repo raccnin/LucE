@@ -27,6 +27,12 @@ void Camera::lookAt(glm::vec3 targetPos)
     updateVectors();
 }
 
+void Camera::lookAt(float x, float y, float z)
+{
+    this->targetPos = glm::vec3(x, y, z);
+    updateVectors();
+}
+
 void Camera::setPos(glm::vec3 worldPos)
 {
     this->worldPos = worldPos;
