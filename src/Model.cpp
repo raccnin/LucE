@@ -10,15 +10,23 @@
 #include <string>
 #include <iostream>
 
-void Model::draw(Shader &shader)
+void Model::draw(Shader &shader, Light &light)
 {
     shader.use();
+
+    // set lighting uniforms
+    shader.setVec3("light.position", light.position);
+    shader.setVec3("light.ambient", light.ambient);
+    shader.setVec3("light.diffuse", light.diffuse);
+    shader.setVec3("light.specular", light.specular);
 
     // set material uniforms
     shader.setVec3("material.ambient", material.ambient);
     shader.setVec3("material.diffuse", material.diffuse);
     shader.setVec3("material.specular", material.specular);
     shader.setFloat("material.shininess", material.shininess);
+
+    // set light uniforms
 
     // get model matrix
     glm::mat4 model(1.0f);

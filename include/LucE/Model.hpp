@@ -9,6 +9,15 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+struct Light
+{
+    glm::vec3 position;
+
+    glm::vec3 diffuse;
+    glm::vec3 ambient;
+    glm::vec3 specular;
+};
+
 
 struct Material
 {
@@ -21,6 +30,7 @@ struct Material
 class Model
 {
     public:
+        glm::vec3 worldPos;
 
         Model(const std::string &path, const Material &material)
         {
@@ -31,7 +41,7 @@ class Model
             this->orientAxis = glm::vec3(0.0f, 1.0f, 0.0f);
             loadModel(path);
         }
-        void draw(Shader &shader);
+        void draw(Shader &shader, Light &light);
         void setPos(glm::vec3 worldPos)
         {
             this->worldPos = worldPos;
@@ -55,12 +65,12 @@ class Model
         }
     private:
         Material material;
-        glm::vec3 worldPos;
         glm::vec3 scale;
         float orientAngle;
         glm::vec3 orientAxis;
         std::vector<Mesh> meshes;
         std::string directory;
+        glm::mat4 modelMat;
 
         void loadModel(std::string path);
         void processNode(aiNode *node, const aiScene *scene);

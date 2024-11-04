@@ -25,7 +25,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(5.0f));
+Camera camera(glm::vec3(-2.0f, 3.0, 3.0f));
 
 // mouse data
 float lastX = 0.0f;
@@ -97,8 +97,10 @@ int main()
     // object config
     // -------------
     std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    Material cubeMat = {glm::vec3(0.0f, 0.5f, 0.5f)};
+    Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
+    Model angel((objDir + "/statue/angel.obj"), cubeMat);
+    Light light{glm::vec3(5.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
 
 
 
@@ -106,6 +108,7 @@ int main()
     // -------------
     glm::mat4 model = glm::mat4(1.0f);
 
+    camera.lookAt(0.0f, 2.0f, 0.0f);
     glm::mat4 view = camera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
@@ -114,7 +117,7 @@ int main()
     UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
     shader.setBlockBinding(Matrices.name, Matrices.bindIdx);
 
-    glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -133,7 +136,8 @@ int main()
         // -------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        cube.draw(shader);
+        shader.setVec3("viewPos", camera.worldPos);
+        angel.draw(shader, light);
         /*
         model = glm::mat4(1.0f);
         model = glm::scale(model, aVec);
