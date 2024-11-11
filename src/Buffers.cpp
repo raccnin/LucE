@@ -55,7 +55,7 @@ RenderFramebuffer::RenderFramebuffer(unsigned int width, unsigned int height)
     setupPlane();
 }
 
-void RenderFramebuffer::drawPlane(Shader &shader)
+void RenderFramebuffer::drawQuad(Shader &shader)
 {
     shader.use();
     shader.setInt("frameTexture", 0);

@@ -72,45 +72,8 @@ int main()
 
     // object config
     // -------------
-
-    // framebuffer quad
-        // quad
-    const float quadVertices[]
-    {   // position  // texcoord
-        -1.0f, 1.0f, 0.0f, 1.0f, // top left
-        -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
-        1.0f, -1.0f, 1.0f, 0.0f, // bottom right
-        1.0f, 1.0f, 1.0f, 1.0f // top right
-    };
-    const unsigned int quadIndices[]
-    {
-        0, 1, 2, 2, 3, 0
-    };
-
-    unsigned int quadVAO, quadVBO, quadEBO;
-    glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &quadVBO);
-    glGenBuffers(1, &quadEBO);
-
-    glBindVertexArray(quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadEBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), &quadIndices, GL_STATIC_DRAW);
-    // attribute config
-    // ----------------
-    // position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) 0);
-    // texCoord
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) (sizeof(float) * 2));
-
-    glBindVertexArray(0);
-
     std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.3f), 1.0f};
+    Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     Light light{glm::vec3(5.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
@@ -135,25 +98,7 @@ int main()
     
     // framebuffer (Post-Processing)
     // -----------------------------
-    unsigned int framebuffer;
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    
-    // color attachment
-    unsigned int colourBuffer;
-    glGenTextures(1, &colourBuffer);
-    glBindTexture(GL_TEXTURE_2D, colourBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBuffer, 0);
-    
-    // rbo for depth/stencil
-    unsigned int rbo;
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+    RenderFramebuffer framebuffer(SCR_WIDTH, SCR_HEIGHT);
     
     // render loop
     // -----------
@@ -172,14 +117,15 @@ int main()
 
         // render to frame buffer
         // ----------------------
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        // 1. bind framebuffer
+        framebuffer.use();
 
-        // clear buffers
-        // -------------
+        // 2. clear buffers
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // 3. draw scene
         shader.use();
         shader.setVec3("viewPos", camera.worldPos);
         angel.draw(shader, light);
@@ -195,10 +141,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-        frameShader.use();
-        glBindVertexArray(quadVAO);
-        glBindTexture(GL_TEXTURE_2D, colourBuffer);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        framebuffer.drawQuad(frameShader);
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

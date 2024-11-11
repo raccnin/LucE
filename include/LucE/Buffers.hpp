@@ -35,7 +35,7 @@ class RenderFramebuffer
         void use(){
             glBindFramebuffer(GL_FRAMEBUFFER, ID);
         }
-        void drawPlane(Shader &shader);
+        void drawQuad(Shader &shader);
     private:
         void setupPlane();
         unsigned int colourBuffer;
