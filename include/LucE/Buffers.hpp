@@ -3,6 +3,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include "Shader.hpp"
 
 class UniformMat4Buf
 {
@@ -19,6 +20,25 @@ enum TransformIdx
     MODEL,
     VIEW,
     PROJECTION
+};
+
+
+
+
+class RenderFramebuffer
+{
+    public:
+        unsigned int ID;
+        unsigned int quadVAO;
+
+        RenderFramebuffer(unsigned int width, unsigned int height);
+        void use(){
+            glBindFramebuffer(GL_FRAMEBUFFER, ID);
+        }
+        void drawQuad(Shader &shader);
+    private:
+        void setupPlane();
+        unsigned int colourBuffer;
 };
 
 #endif
