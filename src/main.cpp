@@ -40,10 +40,6 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
@@ -72,36 +68,52 @@ int main()
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
-
-    // object vertices
-    // ---------------
-    std::vector<Vertex> triangleVertices = {
-        Vertex{glm::vec3(-0.5f, -0.5f, 0.0f),glm::vec3(1.0f)},
-        Vertex{glm::vec3(0.0f, 0.5f, -0.5f), glm::vec3(1.0f)},
-        Vertex{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f)}
-    };
-
-
-    // object indices
-    // --------------
-    std::vector<unsigned int> triangleIndices = {
-        0, 1, 2
-    };
-
-    // object textures
-    std::vector<Texture> triangleTextures= {
-        Texture{0 , "texture_diffuse"}
-    };
+    Shader frameShader = Shader((shaderDir+"/framebuffer.vs").c_str(), (shaderDir+"/post_processing.fs").c_str());
 
     // object config
     // -------------
+
+    // framebuffer quad
+        // quad
+    const float quadVertices[]
+    {   // position  // texcoord
+        -1.0f, 1.0f, 0.0f, 1.0f, // top left
+        -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
+        1.0f, -1.0f, 1.0f, 0.0f, // bottom right
+        1.0f, 1.0f, 1.0f, 1.0f // top right
+    };
+    const unsigned int quadIndices[]
+    {
+        0, 1, 2, 2, 3, 0
+    };
+
+    unsigned int quadVAO, quadVBO, quadEBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glGenBuffers(1, &quadEBO);
+
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadEBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), &quadIndices, GL_STATIC_DRAW);
+    // attribute config
+    // ----------------
+    // position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) 0);
+    // texCoord
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) (sizeof(float) * 2));
+
+    glBindVertexArray(0);
+
     std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     Light light{glm::vec3(5.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
-
-
 
     // shader config
     // -------------
@@ -114,9 +126,35 @@ int main()
     glm::mat4 mats[] = {view, projection};
 
     UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
+    shader.use();
     shader.setBlockBinding(Matrices.name, Matrices.bindIdx);
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    frameShader.use();
+    frameShader.setInt("frameTexture", 0);
+
+    
+    // framebuffer (Post-Processing)
+    // -----------------------------
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    
+    // color attachment
+    unsigned int colourBuffer;
+    glGenTextures(1, &colourBuffer);
+    glBindTexture(GL_TEXTURE_2D, colourBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBuffer, 0);
+    
+    // rbo for depth/stencil
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+    
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -124,7 +162,6 @@ int main()
         // input
         // -----
         processInput(window);
-
         // per frame time logic
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -132,23 +169,36 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-        if (rotatingLight)
-            light.position = glm::vec3(sin(time), 3.0f, cos(time));
+
+        // render to frame buffer
+        // ----------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
         // clear buffers
         // -------------
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        shader.use();
         shader.setVec3("viewPos", camera.worldPos);
         angel.draw(shader, light);
-        /*
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, aVec);
-        shader.setuMat4("model", model);
-        shader.setuVec3("aColor", glm::vec3(0.0f));
-        unitVector.draw(shader);
-        */
+ 
+        // draw to framebuffer plane
+        // -------------------------
+        // 1. bind to default
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        // 2. disable depth test and clear buffers
+        glDisable(GL_DEPTH_TEST);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // 3. render quad with scene data
+        frameShader.use();
+        glBindVertexArray(quadVAO);
+        glBindTexture(GL_TEXTURE_2D, colourBuffer);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
