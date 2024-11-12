@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <stb_image.h>
 
 #include <iostream>
 #include <vector>
@@ -25,7 +26,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(-2.0f, 3.0, 3.0f));
+Camera camera(glm::vec3(5.0f));
 
 // input data
 bool rotatingLight = false;
@@ -40,6 +41,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    stbi_set_flip_vertically_on_load(true);
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
@@ -66,23 +68,31 @@ int main()
 
     // compile shader programs
     // -----------------------
+    //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
+    //Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
+    Shader shader = Shader((shaderDir+"/passthrough.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/framebuffer.vs").c_str(), (shaderDir+"/post_processing.fs").c_str());
 
     // object config
     // -------------
+    //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
     std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
-    Light light{glm::vec3(5.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
+    */
+    Light light{glm::vec3(10.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
+    
+    Model backpack((objDir + "/backpack/backpack.obj"));
+    std::cout << "Loaded Backpack Model\n"; 
 
     // shader config
     // -------------
     glm::mat4 model = glm::mat4(1.0f);
 
-    camera.lookAt(0.0f, 2.0f, 0.0f);
+    camera.lookAt(0.0f, 0.0f, 0.0f);
     glm::mat4 view = camera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
@@ -125,11 +135,12 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // 3. draw scene
+        // 3. draw scene, remember to bind shaders 
         shader.use();
         shader.setVec3("viewPos", camera.worldPos);
-        angel.draw(shader, light);
+        backpack.draw(shader, light);
  
+        
         // draw to framebuffer plane
         // -------------------------
         // 1. bind to default
@@ -142,6 +153,7 @@ int main()
 
         // 3. render quad with scene data
         framebuffer.drawQuad(frameShader);
+        
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
