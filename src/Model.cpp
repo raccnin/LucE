@@ -14,7 +14,6 @@
 
 void Model::draw(Shader &shader, Light &light)
 {
-    shader.use();
 
     // set lighting uniforms
     shader.setVec3("light.position", light.position);
@@ -22,35 +21,38 @@ void Model::draw(Shader &shader, Light &light)
     shader.setVec3("light.diffuse", light.diffuse);
     shader.setVec3("light.specular", light.specular);
 
+    /*
     // set material uniforms
     shader.setVec3("material.ambient", material.ambient);
     shader.setVec3("material.diffuse", material.diffuse);
     shader.setVec3("material.specular", material.specular);
     shader.setFloat("material.shininess", material.shininess);
-
+    */
     // get model matrix
     glm::mat4 model(1.0f);
     model = glm::translate(model, worldPos);
     model = glm::scale(model, scale);
     model = glm::rotate(model, glm::radians(orientAngle), orientAxis);
     shader.setMat4("model", model);
+    
 
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
         meshes[i].draw(shader);
     }
 
-    glUseProgram(0);
+    //glUseProgram(0);
 }
         
-void Model::loadModel(std::string path)
+void Model::loadModel(std::string const &path)
 {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate);
+    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+        return;
     }
 
     directory = path.substr(0, path.find_last_of('/'));
@@ -60,12 +62,12 @@ void Model::loadModel(std::string path)
 
 void Model::processNode(aiNode *node, const aiScene *scene)
 {
-    for (unsigned int i = 0; i < node->mNumMeshes; i ++)
+    for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
-        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(processMesh(mesh, scene));
     }
-    for (unsigned int i = 0; i < node->mNumChildren; i ++)
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
         processNode(node->mChildren[i], scene);
     }
@@ -85,7 +87,20 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         // positional data
         vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
         // normal data
-        vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+        if(mesh->HasNormals())
+        {
+            vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+        }
+        // process texture coordinates 
+        if(mesh->mTextureCoords[0])
+        {
+            // only considering models with single sets of texture coordinates
+            vertex.texCoord = glm::vec2(mesh->mTextureCoords[0][i].x,
+                                        mesh->mTextureCoords[0][i].y);
+        }
+        else{
+            vertex.texCoord = glm::vec2(0.0f, 0.0f);
+        }
 
         vertices.push_back(vertex);
     }
@@ -100,20 +115,20 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     }
 
     // process material
-    if(mesh->mMaterialIndex >= 0)
-    {
-        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        // load diffuse maps
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    }
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+    // 1. diffuse textures
+    std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    // 2. specular textures
+    std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
 
     return Mesh(vertices, indices, textures);    
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string const &typeName)
 {
     std::vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -121,9 +136,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         aiString str;
         mat->GetTexture(type, i, &str); // stores texture file location into str
         bool skip = false;
-        for(unsigned int j; j < texturesLoaded.size(); j++)
+        for(unsigned int j = 0; j < texturesLoaded.size(); j++)
         {
-            if (std::strcmp(texturesLoaded[i].path.data(), str.C_Str()) == 0)
+            if (std::strcmp(texturesLoaded[j].path.data(), str.C_Str()) == 0)
             {
                 textures.push_back(texturesLoaded[j]);
                 skip = true;
@@ -137,9 +152,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
+            texturesLoaded.push_back(texture);
         }
     }
-    std::cout << "Processed Object Material\n";
     return textures;
 }
 
