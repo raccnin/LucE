@@ -28,23 +28,23 @@ in VS_OUT {
 
 void main()
 {
-    vec4 diffuse_sample = texture(material.texture_diffuse1, fs_in.TexCoord);
-    vec4 specular_sample = texture(material.texture_specular1, fs_in.TexCoord);
+    vec3 diffuse_sample = texture(material.texture_diffuse1, fs_in.TexCoord).rgb;
+    vec3 specular_sample = texture(material.texture_specular1, fs_in.TexCoord).rgb;
     // ambient
-    vec3 ambient = diffuse_sample.xyz * light.ambient;
+    vec3 ambient = diffuse_sample * 0.05;
 
     // diffuse
     vec3 norm = normalize(fs_in.Normal);
     vec3 lightDir = normalize(light.position - fs_in.FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * (diff * diffuse_sample.xyz);
+    vec3 diffuse = light.diffuse * diff * diffuse_sample;
 
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1);
-    vec3 specular = light.specular * (spec * specular_sample.xyz);  
+    vec3 specular = light.specular * spec * specular_sample;  
 
-    vec3 phongResult = ambient + diff + specular;
+    vec3 phongResult = ambient + diffuse + specular;
     FragColor = vec4(phongResult, 1.0);
 }

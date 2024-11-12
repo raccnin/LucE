@@ -68,14 +68,16 @@ int main()
 
     // compile shader programs
     // -----------------------
-    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
+    //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
+    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
-    Shader shader = Shader((shaderDir+"/passthrough.vs").c_str(), (shaderDir+"/passthrough.fs").c_str());
+    Shader shader = Shader((shaderDir+"/passthrough.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/framebuffer.vs").c_str(), (shaderDir+"/post_processing.fs").c_str());
 
     // object config
     // -------------
-    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
+    //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
+    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
     /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
