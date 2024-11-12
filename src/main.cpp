@@ -66,17 +66,22 @@ int main()
 
     // compile shader programs
     // -----------------------
-    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/framebuffer.vs").c_str(), (shaderDir+"/post_processing.fs").c_str());
 
     // object config
     // -------------
-    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
+    /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
+    */
     Light light{glm::vec3(5.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
+    
+    Model backpack((objDir + "/backpack/backpack.obj"));
+    std::cout << "Loaded Backpack Model\n"; 
 
     // shader config
     // -------------
@@ -118,7 +123,7 @@ int main()
         // render to frame buffer
         // ----------------------
         // 1. bind framebuffer
-        framebuffer.use();
+        //framebuffer.use();
 
         // 2. clear buffers
         glEnable(GL_DEPTH_TEST);
@@ -128,8 +133,9 @@ int main()
         // 3. draw scene, remember to bind shaders 
         shader.use();
         shader.setVec3("viewPos", camera.worldPos);
-        angel.draw(shader, light);
+        backpack.draw(shader, light);
  
+        /*
         // draw to framebuffer plane
         // -------------------------
         // 1. bind to default
@@ -142,6 +148,7 @@ int main()
 
         // 3. render quad with scene data
         framebuffer.drawQuad(frameShader);
+        */
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

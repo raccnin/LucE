@@ -27,15 +27,16 @@ struct Material
     float shininess;
 };
 
+unsigned int TextureFromFile(const char* path, const std::string &directory);
+
 class Model
 {
     public:
         glm::vec3 worldPos;
-        std::vector<Texture> textures;
+        std::vector<Texture> texturesLoaded;
 
-        Model(const std::string &path, const Material &material)
+        Model(const std::string &path)
         {
-            this->material = material;
             this->worldPos = glm::vec3(0.0f);
             this->scale = glm::vec3(1.0f);
             this->orientAngle = 0.0f;
@@ -73,9 +74,12 @@ class Model
         std::string directory;
         glm::mat4 modelMat;
 
+
         void loadModel(std::string path);
         void processNode(aiNode *node, const aiScene *scene);
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);
+
+        std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 };
 
 #endif

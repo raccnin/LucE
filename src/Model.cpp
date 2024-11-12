@@ -5,6 +5,8 @@
 #include <assimp/postprocess.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include <vector>
 #include <string>
@@ -25,8 +27,6 @@ void Model::draw(Shader &shader, Light &light)
     shader.setVec3("material.diffuse", material.diffuse);
     shader.setVec3("material.specular", material.specular);
     shader.setFloat("material.shininess", material.shininess);
-
-    // set light uniforms
 
     // get model matrix
     glm::mat4 model(1.0f);
@@ -75,6 +75,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    std::vector<Texture> textures;
+
+    // process vertex data
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -96,5 +99,90 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         }
     }
 
-    return Mesh(vertices, indices);
+    // process material
+    if(mesh->mMaterialIndex >= 0)
+    {
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        // load diffuse maps
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    }
+
+    return Mesh(vertices, indices, textures);    
+}
+
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+{
+    std::vector<Texture> textures;
+    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    {
+        aiString str;
+        mat->GetTexture(type, i, &str); // stores texture file location into str
+        bool skip = false;
+        for(unsigned int j; j < texturesLoaded.size(); j++)
+        {
+            if (std::strcmp(texturesLoaded[i].path.data(), str.C_Str()) == 0)
+            {
+                textures.push_back(texturesLoaded[j]);
+                skip = true;
+                break;
+            }
+        }
+        if (!skip)
+        {
+            Texture texture;
+            texture.id = TextureFromFile(str.C_Str(), directory);
+            texture.type = typeName;
+            texture.path = str.C_Str();
+            textures.push_back(texture);
+        }
+    }
+    std::cout << "Processed Object Material\n";
+    return textures;
+}
+
+unsigned int TextureFromFile(const char* path, const std::string &directory)
+{
+    std::string filename(path);
+    filename = directory + '/' + filename;
+
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrChannels; // stb components
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        GLenum format;
+        switch (nrChannels){ // non exhaustive, but stb would not produce more channels
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        stbi_image_free(data);
+    } else
+    {
+        std::cout << "FAILED TO LOAD IMAGE AT::"<< path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
 }
