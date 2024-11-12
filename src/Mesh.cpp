@@ -4,14 +4,6 @@
 #include <string>
 #include <iostream>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
-{
-    this->vertices = vertices;
-    this->indices = indices;
-
-    setupMesh();
-}
-
 void Mesh::setupMesh()
 {
     glGenVertexArrays(1, &VAO);
@@ -28,18 +20,47 @@ void Mesh::setupMesh()
     // attribute config
     // ----------------
     // position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, position));
+    glEnableVertexAttribArray(POSITION);
+    glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, position));
     // normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+    glEnableVertexAttribArray(NORMAL);
+    glVertexAttribPointer(NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+    // tex coord
+    glEnableVertexAttribArray(TEXCOORD);
+    glVertexAttribPointer(TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoord));
 
     glBindVertexArray(0);
 }
 
 void Mesh::draw(Shader &shader)
 {
+    // bind material textures accordingly
+    // format of: texture_{type}N
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+    for (unsigned int i = 0; i < textures.size(); i++)
+    {
+        // 1. bind next sampler
+        glActiveTexture(GL_TEXTURE0+i);
+        std::string number;
+        std::string name = textures[i].type;
+        // 2. determine texture name, then add to material struct
+        if (name == "texture_diffuse")
+            number = std::to_string(diffuseNr++);
+        else if (name == "texture_specular")
+            number = std::to_string(specularNr++);
+
+        // set appropriate texture sampler to name convention
+        shader.setInt(("material."+ name + number).c_str(), i);
+        // 3. bind appropriate texture to previously bound sampler
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    }
+    // restore texture state to sampler 0
+    glActiveTexture(GL_TEXTURE0);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+
+    // restore global states
     glBindVertexArray(0);
 }

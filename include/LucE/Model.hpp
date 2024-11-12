@@ -31,6 +31,7 @@ class Model
 {
     public:
         glm::vec3 worldPos;
+        std::vector<Texture> textures;
 
         Model(const std::string &path, const Material &material)
         {

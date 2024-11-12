@@ -125,7 +125,7 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // 3. draw scene
+        // 3. draw scene, remember to bind shaders 
         shader.use();
         shader.setVec3("viewPos", camera.worldPos);
         angel.draw(shader, light);
