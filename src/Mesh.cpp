@@ -30,10 +30,10 @@ void Mesh::setupMesh()
     glVertexAttribPointer(vTEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoord));
     // 
     glEnableVertexAttribArray(vTANGENT);
-    glVertexAttribPointer(vTANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+    glVertexAttribPointer(vTANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, tangent));
 
     glEnableVertexAttribArray(vBITANGENT);
-    glVertexAttribPointer(vBITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+    glVertexAttribPointer(vBITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, bitangent));
 
     glBindVertexArray(0);
 }

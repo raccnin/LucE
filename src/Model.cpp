@@ -47,7 +47,7 @@ void Model::draw(Shader &shader, Light &light)
 void Model::loadModel(std::string const &path)
 {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -83,13 +83,20 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
+        // vertex to fill
         Vertex vertex;
         // positional data
         vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
         // normal data
         if(mesh->HasNormals())
         {
+            // normal, tangent, bitangents
+            // now calculated using the ai_CalcTangentSpace directive
             vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+            // tangents
+            vertex.tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+            // bitangents
+            vertex.bitangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
         }
         // process texture coordinates 
         if(mesh->mTextureCoords[0])
