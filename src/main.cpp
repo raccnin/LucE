@@ -87,12 +87,14 @@ int main()
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
-    Light light{glm::vec3(10.0f), glm::vec3(0.5f), glm::vec3(0.1f), glm::vec3(1.0f)};
+    Light light{glm::vec3(-10.0f, 1.0f, 10.0f), glm::vec3(0.05f), glm::vec3(0.1f), glm::vec3(0.3f)};
     Model backpack((objDir + "/backpack/backpack.obj"));
     std::cout << "Loaded Backpack Model\n"; 
     unsigned int frameQuad = makeQuad();
 
     Model* scene[] = {&backpack};
+
+    std::cout << vTANGENT << std::endl;
 
     // shader config
     // -------------

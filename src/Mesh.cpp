@@ -20,14 +20,20 @@ void Mesh::setupMesh()
     // attribute config
     // ----------------
     // position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, position));
+    glEnableVertexAttribArray(vPOSITION);
+    glVertexAttribPointer(vPOSITION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, position));
     // normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+    glEnableVertexAttribArray(vNORMAL);
+    glVertexAttribPointer(vNORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
     // tex coord
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoord));
+    glEnableVertexAttribArray(vTEXCOORD);
+    glVertexAttribPointer(vTEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoord));
+    // 
+    glEnableVertexAttribArray(vTANGENT);
+    glVertexAttribPointer(vTANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, tangent));
+
+    glEnableVertexAttribArray(vBITANGENT);
+    glVertexAttribPointer(vBITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, bitangent));
 
     glBindVertexArray(0);
 }
