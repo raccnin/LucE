@@ -47,5 +47,4 @@ class Mesh
         unsigned int VAO, VBO, EBO;
         void setupMesh();
 };
-
 #endif
