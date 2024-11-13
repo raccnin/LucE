@@ -7,9 +7,11 @@
 
 enum VERTEX_ATTRIB
 {
-    POSITION,
-    NORMAL,
-    TEXCOORD
+    vPOSITION,
+    vNORMAL,
+    vTEXCOORD,
+    vTANGENT,
+    vBITANGENT
 };
 
 struct Vertex

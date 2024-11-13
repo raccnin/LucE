@@ -88,6 +88,8 @@ int main()
     Model backpack((objDir + "/backpack/backpack.obj"));
     std::cout << "Loaded Backpack Model\n"; 
 
+    std::cout << vTANGENT << std::endl;
+
     // shader config
     // -------------
     glm::mat4 model = glm::mat4(1.0f);
