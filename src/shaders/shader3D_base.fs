@@ -31,7 +31,7 @@ void main()
     vec3 diffuse_sample = texture(material.texture_diffuse1, fs_in.TexCoord).rgb;
     vec3 specular_sample = texture(material.texture_specular1, fs_in.TexCoord).rgb;
     // ambient
-    vec3 ambient = diffuse_sample * 0.05;
+    vec3 ambient = diffuse_sample * light.ambient;
 
     // diffuse
     vec3 norm = normalize(fs_in.Normal);
@@ -41,8 +41,8 @@ void main()
 
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
     vec3 specular = light.specular * spec * specular_sample;  
 
     vec3 phongResult = ambient + diffuse + specular;
