@@ -21,13 +21,6 @@ void Model::draw(Shader &shader, Light &light)
     shader.setVec3("light.diffuse", light.diffuse);
     shader.setVec3("light.specular", light.specular);
 
-    /*
-    // set material uniforms
-    shader.setVec3("material.ambient", material.ambient);
-    shader.setVec3("material.diffuse", material.diffuse);
-    shader.setVec3("material.specular", material.specular);
-    shader.setFloat("material.shininess", material.shininess);
-    */
     // get model matrix
     glm::mat4 model(1.0f);
     model = glm::translate(model, worldPos);

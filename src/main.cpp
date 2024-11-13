@@ -16,6 +16,10 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+unsigned int makeQuad();
+void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
+void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader);
+void drawQuad(unsigned int quadVAO, unsigned int colourBuffer, Shader &shader);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -84,9 +88,11 @@ int main()
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
     Light light{glm::vec3(-10.0f, 1.0f, 10.0f), glm::vec3(0.05f), glm::vec3(0.1f), glm::vec3(0.3f)};
-    
     Model backpack((objDir + "/backpack/backpack.obj"));
     std::cout << "Loaded Backpack Model\n"; 
+    unsigned int frameQuad = makeQuad();
+
+    Model* scene[] = {&backpack};
 
     std::cout << vTANGENT << std::endl;
 
@@ -110,7 +116,8 @@ int main()
     
     // framebuffer (Post-Processing)
     // -----------------------------
-    RenderFramebuffer framebuffer(SCR_WIDTH, SCR_HEIGHT);
+    msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4);
+    Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
     
     // render loop
     // -----------
@@ -127,21 +134,23 @@ int main()
 
         float time = glfwGetTime();
 
+        // set uniforms
+        shader.use();
+        shader.setVec3("viewPos", camera.worldPos);
+
         // render to frame buffer
         // ----------------------
-        // 1. bind framebuffer
-        framebuffer.use();
+        // 1. bind MSAA framebuffer
+        msBuffer.use();
 
         // 2. clear buffers
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // 3. draw scene, remember to bind shaders 
-        shader.use();
-        shader.setVec3("viewPos", camera.worldPos);
-        backpack.draw(shader, light);
- 
+        // 3. draw scene
+        drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
+        // condense MSAA buffer to single buffer
+        blitBuffers(msBuffer, screenBuffer);
         
         // draw to framebuffer plane
         // -------------------------
@@ -154,8 +163,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-        framebuffer.drawQuad(frameShader);
-        
+        drawQuad(frameQuad,screenBuffer.colourBuffer, frameShader);
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -185,4 +194,73 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+unsigned int makeQuad()
+{
+    const float quadVertices[]
+    {   // position  // texcoord
+        -1.0f, 1.0f, 0.0f, 1.0f, // top left
+        -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
+        1.0f, -1.0f, 1.0f, 0.0f, // bottom right
+        1.0f, 1.0f, 1.0f, 1.0f // top right
+    };
+    const unsigned int quadIndices[]
+    {
+        0, 1, 2, 2, 3, 0
+    };
+
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), &quadIndices, GL_STATIC_DRAW);
+    // attribute config
+    // ----------------
+    // position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) 0);
+    // texCoord
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) (sizeof(float) * 2));
+
+    glBindVertexArray(0);
+
+    return VAO;
+}
+
+void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf)
+{
+        glBindFramebuffer(GL_READ_BUFFER, readBuf.ID);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawBuf.ID);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_READ_BUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+}
+
+void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Light &light, Shader &shader)
+{
+    shader.use();
+    for(unsigned int i = 0; i < nModels; i++)
+    {
+        models[i]->draw(shader, light);
+    }
+    glUseProgram(0);
+}
+
+void drawQuad(unsigned int quadVAO, unsigned int colourBuffer, Shader &shader)
+{
+        shader.use();
+        glBindTexture(GL_TEXTURE_2D, colourBuffer);
+        glBindVertexArray(quadVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+        glUseProgram(0);
 }

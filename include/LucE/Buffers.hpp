@@ -23,22 +23,28 @@ enum TransformIdx
 };
 
 
-
-
-class RenderFramebuffer
+class Framebuffer
 {
     public:
         unsigned int ID;
-        unsigned int quadVAO;
+        unsigned int colourBuffer;
 
-        RenderFramebuffer(unsigned int width, unsigned int height);
+        Framebuffer(unsigned int width, unsigned int height);
         void use(){
             glBindFramebuffer(GL_FRAMEBUFFER, ID);
         }
-        void drawQuad(Shader &shader);
-    private:
-        void setupPlane();
+};
+
+class msFramebuffer
+{
+    public:
+        unsigned int ID;
         unsigned int colourBuffer;
+
+        msFramebuffer(unsigned int width, unsigned int height, unsigned int samples);
+        void use(){
+            glBindFramebuffer(GL_FRAMEBUFFER, ID);
+        }
 };
 
 #endif
