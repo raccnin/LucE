@@ -30,7 +30,7 @@ void UniformMat4Buf::fillIdx(const unsigned int idx, const glm::mat4 &mat)
 
 // frame buffer
 // ------------
-Framebuffer::Framebuffer(unsigned int width, unsigned int height)
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLenum internal_format /* default GL_RGB */)
 {
     // create buffer
     glGenFramebuffers(1, &ID);
@@ -38,7 +38,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height)
     // bind color attachment
     glGenTextures(1, &colourBuffer);
     glBindTexture(GL_TEXTURE_2D, colourBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBuffer, 0);
@@ -55,14 +55,14 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height)
 
 // multisampled frame buffer
 // -------------------------
-msFramebuffer::msFramebuffer(unsigned int width, unsigned int height, unsigned int samples)
+msFramebuffer::msFramebuffer(unsigned int width, unsigned int height, unsigned int samples, GLenum internal_format /* default GL_RGB */)
 {
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
     // make multisampled color attachment
     glGenTextures(1, &colourBuffer);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colourBuffer);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internal_format, width, height, GL_TRUE);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, colourBuffer, 0);
     // make multisampled rbo

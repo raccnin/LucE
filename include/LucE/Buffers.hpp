@@ -29,7 +29,7 @@ class Framebuffer
         unsigned int ID;
         unsigned int colourBuffer;
 
-        Framebuffer(unsigned int width, unsigned int height);
+        Framebuffer(unsigned int width, unsigned int height, GLenum internal_format = GL_RGB);
         void use(){
             glBindFramebuffer(GL_FRAMEBUFFER, ID);
         }
@@ -41,7 +41,7 @@ class msFramebuffer
         unsigned int ID;
         unsigned int colourBuffer;
 
-        msFramebuffer(unsigned int width, unsigned int height, unsigned int samples);
+        msFramebuffer(unsigned int width, unsigned int height, unsigned int samples, GLenum internal_format = GL_RGB);
         void use(){
             glBindFramebuffer(GL_FRAMEBUFFER, ID);
         }
