@@ -26,6 +26,8 @@ in VS_OUT {
     vec2 TexCoord;
 } fs_in;
 
+float attenuation(float distance);
+
 void main()
 {
     vec3 diffuse_sample = texture(material.texture_diffuse1, fs_in.TexCoord).rgb;
@@ -37,14 +39,26 @@ void main()
     vec3 norm = normalize(fs_in.Normal);
     vec3 lightDir = normalize(light.position - fs_in.FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * diff * diffuse_sample;
+    vec3 diffuse = light.diffuse * (diff * diffuse_sample);
+
 
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
-    vec3 specular = light.specular * spec * specular_sample;  
+    vec3 specular = light.specular * spec * (specular_sample);  
 
     vec3 phongResult = ambient + diffuse + specular;
+
+		// attenuate
+		float distance = length(light.position - fs_in.FragPos);
+		float attenuation = attenuation(distance);
+		phongResult *= attenuation;
+
     FragColor = vec4(phongResult, 1.0);
+}
+
+float attenuation(float distance)
+{
+	return (1.0 / (distance * distance));
 }

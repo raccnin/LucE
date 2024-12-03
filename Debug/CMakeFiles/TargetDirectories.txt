@@ -1,0 +1,3 @@
+/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles/translucency_engine.dir
+/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles/edit_cache.dir
+/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles/rebuild_cache.dir

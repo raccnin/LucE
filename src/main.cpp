@@ -20,6 +20,7 @@ unsigned int makeQuad();
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
 void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader);
 void drawQuad(unsigned int quadVAO, unsigned int colourBuffer, Shader &shader);
+GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -35,20 +36,12 @@ Camera camera(glm::vec3(5.0f));
 // input data
 bool rotatingLight = false;
 
-
 int main()
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     stbi_set_flip_vertically_on_load(true);
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+
+		std::string title = "OpenGL";
+		GLFWwindow* window = setup_window(SCR_WIDTH, SCR_HEIGHT, title);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -75,8 +68,8 @@ int main()
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
-    Shader shader = Shader((shaderDir+"/passthrough.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
-    Shader frameShader = Shader((shaderDir+"/framebuffer.vs").c_str(), (shaderDir+"/post_processing.fs").c_str());
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
+    Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
     // object config
     // -------------
@@ -87,7 +80,7 @@ int main()
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
-    Light light{glm::vec3(-10.0f, 1.0f, 10.0f), glm::vec3(0.05f), glm::vec3(0.1f), glm::vec3(0.3f)};
+    Light light{glm::vec3(-5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f)};
     Model backpack((objDir + "/backpack/backpack.obj"));
     std::cout << "Loaded Backpack Model\n"; 
     unsigned int frameQuad = makeQuad();
@@ -116,7 +109,7 @@ int main()
     
     // framebuffer (Post-Processing)
     // -----------------------------
-    msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4);
+    msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4, GL_RGBA16F);
     Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
     
     // render loop
@@ -263,4 +256,20 @@ void drawQuad(unsigned int quadVAO, unsigned int colourBuffer, Shader &shader)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
         glUseProgram(0);
+}
+
+GLFWwindow* setup_window( unsigned const int scr_width, unsigned const int scr_height, std::string &title)
+{
+	// glfw: initialize and configure
+	// ------------------------------
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// glfw window creation
+	// --------------------
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title.c_str(), NULL, NULL);
+	return window;
+
 }
