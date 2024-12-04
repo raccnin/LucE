@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/home/shalash/Repos/Diss24/engine/build",
+  "command": "/usr/bin/c++  -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm -g -o CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Buffers.cpp",
+  "file": "/home/shalash/Repos/Diss24/engine/src/Buffers.cpp",
+  "output": "CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o"
+},
+{
+  "directory": "/home/shalash/Repos/Diss24/engine/build",
+  "command": "/usr/bin/c++  -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm -g -o CMakeFiles/translucency_engine.dir/src/Camera.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Camera.cpp",
+  "file": "/home/shalash/Repos/Diss24/engine/src/Camera.cpp",
+  "output": "CMakeFiles/translucency_engine.dir/src/Camera.cpp.o"
+},
+{
+  "directory": "/home/shalash/Repos/Diss24/engine/build",
+  "command": "/usr/bin/c++  -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm -g -o CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Mesh.cpp",
+  "file": "/home/shalash/Repos/Diss24/engine/src/Mesh.cpp",
+  "output": "CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o"
+},
+{
+  "directory": "/home/shalash/Repos/Diss24/engine/build",
+  "command": "/usr/bin/c++  -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm -g -o CMakeFiles/translucency_engine.dir/src/Model.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Model.cpp",
+  "file": "/home/shalash/Repos/Diss24/engine/src/Model.cpp",
+  "output": "CMakeFiles/translucency_engine.dir/src/Model.cpp.o"
+},
+{
+  "directory": "/home/shalash/Repos/Diss24/engine/build",
+  "command": "/usr/bin/c++  -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm -g -o CMakeFiles/translucency_engine.dir/src/Shader.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Shader.cpp",
+  "file": "/home/shalash/Repos/Diss24/engine/src/Shader.cpp",
+  "output": "CMakeFiles/translucency_engine.dir/src/Shader.cpp.o"
+},
+{
+  "directory": "/home/shalash/Repos/Diss24/engine/build",
+  "command": "/usr/bin/c++  -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm -g -o CMakeFiles/translucency_engine.dir/src/main.cpp.o -c /home/shalash/Repos/Diss24/engine/src/main.cpp",
+  "file": "/home/shalash/Repos/Diss24/engine/src/main.cpp",
+  "output": "CMakeFiles/translucency_engine.dir/src/main.cpp.o"
+}
+]
