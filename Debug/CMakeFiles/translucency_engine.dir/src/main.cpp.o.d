@@ -1,9 +1,8 @@
 CMakeFiles/translucency_engine.dir/src/main.cpp.o: \
- /home/pailiah/Repos/Diss24/Engine/src/main.cpp \
+ /home/shalash/Repos/Diss24/engine/src/main.cpp \
  /usr/include/stdc-predef.h \
- /home/pailiah/Repos/Diss24/Engine/include/LucE/Camera.hpp \
- /home/pailiah/Code/libs/glm/glm/glm.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/_fixes.hpp \
+ /home/shalash/Repos/Diss24/engine/include/LucE/Camera.hpp \
+ /usr/include/glm/glm.hpp /usr/include/glm/detail/_fixes.hpp \
  /usr/include/c++/14/cmath /usr/include/c++/14/bits/requires_hosted.h \
  /usr/include/c++/14/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
@@ -71,11 +70,9 @@ CMakeFiles/translucency_engine.dir/src/main.cpp.o: \
  /usr/include/c++/14/tr1/poly_hermite.tcc \
  /usr/include/c++/14/tr1/poly_laguerre.tcc \
  /usr/include/c++/14/tr1/riemann_zeta.tcc \
- /home/pailiah/Code/libs/glm/glm/detail/setup.hpp \
- /usr/include/c++/14/cassert /usr/include/assert.h \
- /usr/include/c++/14/cstddef \
- /home/pailiah/Code/libs/glm/glm/detail/../simd/platform.h \
- /usr/include/c++/14/cstdint \
+ /usr/include/glm/detail/setup.hpp /usr/include/c++/14/cassert \
+ /usr/include/assert.h /usr/include/c++/14/cstddef \
+ /usr/include/glm/simd/platform.h /usr/include/c++/14/cstdint \
  /usr/lib/gcc/x86_64-redhat-linux/14/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h \
  /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h \
@@ -88,32 +85,27 @@ CMakeFiles/translucency_engine.dir/src/main.cpp.o: \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/bits/uio_lim.h /usr/include/c++/14/cfloat \
  /usr/lib/gcc/x86_64-redhat-linux/14/include/float.h \
- /home/pailiah/Code/libs/glm/glm/fwd.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/qualifier.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/vec2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_bool2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_vec2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_vec2.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/./compute_vector_relational.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/./setup.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_bool2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_float2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_float2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_double2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_double2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_int2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_int2_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../ext/scalar_int_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../ext/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_uint2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_uint2_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../ext/scalar_uint_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/vec3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_bool3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_vec3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_vec3.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/compute_vector_decl.hpp \
+ /usr/include/glm/fwd.hpp /usr/include/glm/detail/qualifier.hpp \
+ /usr/include/glm/detail/setup.hpp /usr/include/glm/vec2.hpp \
+ /usr/include/glm/ext/vector_bool2.hpp \
+ /usr/include/glm/detail/type_vec2.hpp \
+ /usr/include/glm/detail/type_vec2.inl \
+ /usr/include/glm/detail/compute_vector_relational.hpp \
+ /usr/include/glm/ext/vector_bool2_precision.hpp \
+ /usr/include/glm/ext/vector_float2.hpp \
+ /usr/include/glm/ext/vector_float2_precision.hpp \
+ /usr/include/glm/ext/vector_double2.hpp \
+ /usr/include/glm/ext/vector_double2_precision.hpp \
+ /usr/include/glm/ext/vector_int2.hpp \
+ /usr/include/glm/ext/vector_int2_sized.hpp \
+ /usr/include/glm/ext/scalar_int_sized.hpp \
+ /usr/include/glm/detail/setup.hpp /usr/include/glm/ext/vector_uint2.hpp \
+ /usr/include/glm/ext/vector_uint2_sized.hpp \
+ /usr/include/glm/ext/scalar_uint_sized.hpp /usr/include/glm/vec3.hpp \
+ /usr/include/glm/ext/vector_bool3.hpp \
+ /usr/include/glm/detail/type_vec3.hpp \
+ /usr/include/glm/detail/type_vec3.inl \
+ /usr/include/glm/detail/compute_vector_decl.hpp \
  /usr/include/c++/14/functional /usr/include/c++/14/bits/stl_function.h \
  /usr/include/c++/14/backward/binders.h /usr/include/c++/14/tuple \
  /usr/include/c++/14/bits/uses_allocator.h \
@@ -144,120 +136,99 @@ CMakeFiles/translucency_engine.dir/src/main.cpp.o: \
  /usr/include/c++/14/bits/stl_vector.h \
  /usr/include/c++/14/bits/stl_bvector.h \
  /usr/include/c++/14/bits/vector.tcc /usr/include/c++/14/array \
- /usr/include/c++/14/compare \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/_vectorize.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_bool3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_float3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_float3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_double3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_double3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_int3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_int3_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_uint3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_uint3_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/vec4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_bool4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_vec4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_vec4.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_bool4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_float4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_float4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_double4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_double4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_int4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_int4_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_uint4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/vector_uint4_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/mat2x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/matrix_double2x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_mat2x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/type_mat2x2.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../matrix.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat2x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double2x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat2x3.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double2x3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float2x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float2x3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat2x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double2x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat2x4.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double2x4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float2x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float2x4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat3x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double3x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat3x2.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double3x2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float3x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float3x2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat3x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double3x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat3x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat3x3.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../common.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/_fixes.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/func_common.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/../vector_relational.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/../detail/func_vector_relational.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/compute_common.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/type_vec1.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/type_vec1.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double3x3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float3x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float3x3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat3x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double3x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat3x4.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double3x4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float3x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float3x4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat4x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double4x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat4x2.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double4x2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float4x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float4x2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat4x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double4x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat4x3.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double4x3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float4x3.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float4x3_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../mat4x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double4x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/type_mat4x4.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../geometric.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/func_geometric.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/../exponential.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/../detail/../detail/../detail/func_exponential.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_double4x4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float4x4.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/.././ext/matrix_float4x4_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/../detail/../detail/func_matrix.inl \
- /home/pailiah/Code/libs/glm/glm/./ext/matrix_double2x2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/matrix_float2x2.hpp \
- /home/pailiah/Code/libs/glm/glm/./ext/matrix_float2x2_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/trigonometric.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/func_trigonometric.inl \
- /home/pailiah/Code/libs/glm/glm/packing.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/func_packing.inl \
- /home/pailiah/Code/libs/glm/glm/detail/type_half.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/type_half.inl \
- /home/pailiah/Code/libs/glm/glm/integer.hpp \
- /home/pailiah/Code/libs/glm/glm/detail/func_integer.inl \
- /home/pailiah/Repos/Diss24/Engine/include/LucE/Shader.hpp \
+ /usr/include/c++/14/compare /usr/include/glm/detail/_vectorize.hpp \
+ /usr/include/glm/ext/vector_bool3_precision.hpp \
+ /usr/include/glm/ext/vector_float3.hpp \
+ /usr/include/glm/ext/vector_float3_precision.hpp \
+ /usr/include/glm/ext/vector_double3.hpp \
+ /usr/include/glm/ext/vector_double3_precision.hpp \
+ /usr/include/glm/ext/vector_int3.hpp \
+ /usr/include/glm/ext/vector_int3_sized.hpp \
+ /usr/include/glm/ext/vector_uint3.hpp \
+ /usr/include/glm/ext/vector_uint3_sized.hpp /usr/include/glm/vec4.hpp \
+ /usr/include/glm/ext/vector_bool4.hpp \
+ /usr/include/glm/detail/type_vec4.hpp \
+ /usr/include/glm/detail/type_vec4.inl \
+ /usr/include/glm/ext/vector_bool4_precision.hpp \
+ /usr/include/glm/ext/vector_float4.hpp \
+ /usr/include/glm/ext/vector_float4_precision.hpp \
+ /usr/include/glm/ext/vector_double4.hpp \
+ /usr/include/glm/ext/vector_double4_precision.hpp \
+ /usr/include/glm/ext/vector_int4.hpp \
+ /usr/include/glm/ext/vector_int4_sized.hpp \
+ /usr/include/glm/ext/vector_uint4.hpp \
+ /usr/include/glm/ext/vector_uint4_sized.hpp /usr/include/glm/mat2x2.hpp \
+ /usr/include/glm/ext/matrix_double2x2.hpp \
+ /usr/include/glm/detail/type_mat2x2.hpp \
+ /usr/include/glm/detail/type_mat2x2.inl /usr/include/glm/matrix.hpp \
+ /usr/include/glm/mat2x3.hpp /usr/include/glm/ext/matrix_double2x3.hpp \
+ /usr/include/glm/detail/type_mat2x3.hpp \
+ /usr/include/glm/detail/type_mat2x3.inl \
+ /usr/include/glm/ext/matrix_double2x3_precision.hpp \
+ /usr/include/glm/ext/matrix_float2x3.hpp \
+ /usr/include/glm/ext/matrix_float2x3_precision.hpp \
+ /usr/include/glm/mat2x4.hpp /usr/include/glm/ext/matrix_double2x4.hpp \
+ /usr/include/glm/detail/type_mat2x4.hpp \
+ /usr/include/glm/detail/type_mat2x4.inl \
+ /usr/include/glm/ext/matrix_double2x4_precision.hpp \
+ /usr/include/glm/ext/matrix_float2x4.hpp \
+ /usr/include/glm/ext/matrix_float2x4_precision.hpp \
+ /usr/include/glm/mat3x2.hpp /usr/include/glm/ext/matrix_double3x2.hpp \
+ /usr/include/glm/detail/type_mat3x2.hpp \
+ /usr/include/glm/detail/type_mat3x2.inl \
+ /usr/include/glm/ext/matrix_double3x2_precision.hpp \
+ /usr/include/glm/ext/matrix_float3x2.hpp \
+ /usr/include/glm/ext/matrix_float3x2_precision.hpp \
+ /usr/include/glm/mat3x3.hpp /usr/include/glm/ext/matrix_double3x3.hpp \
+ /usr/include/glm/detail/type_mat3x3.hpp \
+ /usr/include/glm/detail/type_mat3x3.inl /usr/include/glm/common.hpp \
+ /usr/include/glm/detail/func_common.inl \
+ /usr/include/glm/vector_relational.hpp \
+ /usr/include/glm/detail/func_vector_relational.inl \
+ /usr/include/glm/detail/compute_common.hpp \
+ /usr/include/glm/detail/type_vec1.hpp \
+ /usr/include/glm/detail/type_vec1.inl \
+ /usr/include/glm/ext/matrix_double3x3_precision.hpp \
+ /usr/include/glm/ext/matrix_float3x3.hpp \
+ /usr/include/glm/ext/matrix_float3x3_precision.hpp \
+ /usr/include/glm/mat3x4.hpp /usr/include/glm/ext/matrix_double3x4.hpp \
+ /usr/include/glm/detail/type_mat3x4.hpp \
+ /usr/include/glm/detail/type_mat3x4.inl \
+ /usr/include/glm/ext/matrix_double3x4_precision.hpp \
+ /usr/include/glm/ext/matrix_float3x4.hpp \
+ /usr/include/glm/ext/matrix_float3x4_precision.hpp \
+ /usr/include/glm/mat4x2.hpp /usr/include/glm/ext/matrix_double4x2.hpp \
+ /usr/include/glm/detail/type_mat4x2.hpp \
+ /usr/include/glm/detail/type_mat4x2.inl \
+ /usr/include/glm/ext/matrix_double4x2_precision.hpp \
+ /usr/include/glm/ext/matrix_float4x2.hpp \
+ /usr/include/glm/ext/matrix_float4x2_precision.hpp \
+ /usr/include/glm/mat4x3.hpp /usr/include/glm/ext/matrix_double4x3.hpp \
+ /usr/include/glm/detail/type_mat4x3.hpp \
+ /usr/include/glm/detail/type_mat4x3.inl \
+ /usr/include/glm/ext/matrix_double4x3_precision.hpp \
+ /usr/include/glm/ext/matrix_float4x3.hpp \
+ /usr/include/glm/ext/matrix_float4x3_precision.hpp \
+ /usr/include/glm/mat4x4.hpp /usr/include/glm/ext/matrix_double4x4.hpp \
+ /usr/include/glm/detail/type_mat4x4.hpp \
+ /usr/include/glm/detail/type_mat4x4.inl /usr/include/glm/geometric.hpp \
+ /usr/include/glm/detail/func_geometric.inl \
+ /usr/include/glm/exponential.hpp \
+ /usr/include/glm/detail/func_exponential.inl \
+ /usr/include/glm/ext/matrix_double4x4_precision.hpp \
+ /usr/include/glm/ext/matrix_float4x4.hpp \
+ /usr/include/glm/ext/matrix_float4x4_precision.hpp \
+ /usr/include/glm/detail/func_matrix.inl \
+ /usr/include/glm/ext/matrix_double2x2_precision.hpp \
+ /usr/include/glm/ext/matrix_float2x2.hpp \
+ /usr/include/glm/ext/matrix_float2x2_precision.hpp \
+ /usr/include/glm/trigonometric.hpp \
+ /usr/include/glm/detail/func_trigonometric.inl \
+ /usr/include/glm/packing.hpp /usr/include/glm/detail/func_packing.inl \
+ /usr/include/glm/detail/type_half.hpp \
+ /usr/include/glm/detail/type_half.inl /usr/include/glm/integer.hpp \
+ /usr/include/glm/detail/func_integer.inl \
+ /home/shalash/Repos/Diss24/engine/include/LucE/Shader.hpp \
  /usr/include/c++/14/string /usr/include/c++/14/bits/stringfwd.h \
  /usr/include/c++/14/bits/char_traits.h \
  /usr/include/c++/14/bits/postypes.h /usr/include/c++/14/cwchar \
@@ -284,27 +255,26 @@ CMakeFiles/translucency_engine.dir/src/main.cpp.o: \
  /usr/include/linux/errno.h /usr/include/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/bits/types/error_t.h /usr/include/c++/14/bits/charconv.h \
- /usr/include/c++/14/bits/basic_string.tcc \
- /home/pailiah/Code/libs/glad/include/glad/glad.h \
- /usr/include/KHR/khrplatform.h \
- /home/pailiah/Repos/Diss24/Engine/include/LucE/Mesh.hpp \
- /home/pailiah/Repos/Diss24/Engine/include/LucE/Model.hpp \
- /home/pailiah/Code/libs/assimp/include/assimp/Importer.hpp \
- /home/pailiah/Code/libs/assimp/include/assimp/types.h \
+ /usr/include/c++/14/bits/basic_string.tcc /usr/include/glad.h \
+ /home/shalash/Code/lib/glad/include/KHR/khrplatform.h \
+ /home/shalash/Repos/Diss24/engine/include/LucE/Mesh.hpp \
+ /home/shalash/Repos/Diss24/engine/include/LucE/Model.hpp \
+ /home/shalash/Code/lib/assimp/include/assimp/Importer.hpp \
+ /home/shalash/Code/lib/assimp/include/assimp/types.h \
  /usr/include/string.h /usr/include/strings.h \
- /home/pailiah/Code/libs/assimp/include/assimp/defs.h \
- /home/pailiah/Code/libs/assimp/include/assimp/config.h \
- /home/pailiah/Code/libs/assimp/include/assimp/vector2.h \
- /home/pailiah/Code/libs/assimp/include/assimp/vector3.h \
- /home/pailiah/Code/libs/assimp/include/assimp/color4.h \
- /home/pailiah/Code/libs/assimp/include/assimp/matrix3x3.h \
- /home/pailiah/Code/libs/assimp/include/assimp/matrix4x4.h \
- /home/pailiah/Code/libs/assimp/include/assimp/quaternion.h \
+ /home/shalash/Code/lib/assimp/include/assimp/defs.h \
+ /home/shalash/Code/lib/assimp/include/assimp/config.h \
+ /home/shalash/Code/lib/assimp/include/assimp/vector2.h \
+ /home/shalash/Code/lib/assimp/include/assimp/vector3.h \
+ /home/shalash/Code/lib/assimp/include/assimp/color4.h \
+ /home/shalash/Code/lib/assimp/include/assimp/matrix3x3.h \
+ /home/shalash/Code/lib/assimp/include/assimp/matrix4x4.h \
+ /home/shalash/Code/lib/assimp/include/assimp/quaternion.h \
  /usr/include/c++/14/cstring \
- /home/pailiah/Code/libs/assimp/include/assimp/vector2.inl \
- /home/pailiah/Code/libs/assimp/include/assimp/vector3.inl \
- /home/pailiah/Code/libs/assimp/include/assimp/color4.inl \
- /home/pailiah/Code/libs/assimp/include/assimp/matrix3x3.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/vector2.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/vector3.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/color4.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/matrix3x3.inl \
  /usr/include/c++/14/algorithm /usr/include/c++/14/bits/stl_algo.h \
  /usr/include/c++/14/bits/algorithmfwd.h \
  /usr/include/c++/14/bits/stl_heap.h \
@@ -312,82 +282,75 @@ CMakeFiles/translucency_engine.dir/src/main.cpp.o: \
  /usr/include/c++/14/bits/stl_tempbuf.h \
  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
  /usr/include/c++/14/pstl/execution_defs.h \
- /home/pailiah/Code/libs/assimp/include/assimp/matrix4x4.inl \
- /home/pailiah/Code/libs/assimp/include/assimp/MathFunctions.h \
- /home/pailiah/Code/libs/assimp/include/assimp/quaternion.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/matrix4x4.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/MathFunctions.h \
+ /home/shalash/Code/lib/assimp/include/assimp/quaternion.inl \
  /usr/include/c++/14/exception /usr/include/c++/14/bits/exception_ptr.h \
  /usr/include/c++/14/bits/cxxabi_init_exception.h \
  /usr/include/c++/14/bits/nested_exception.h \
- /home/pailiah/Code/libs/assimp/include/assimp/scene.h \
- /home/pailiah/Code/libs/assimp/include/assimp/texture.h \
- /home/pailiah/Code/libs/assimp/include/assimp/Compiler/pushpack1.h \
- /home/pailiah/Code/libs/assimp/include/assimp/Compiler/poppack1.h \
- /home/pailiah/Code/libs/assimp/include/assimp/mesh.h \
- /home/pailiah/Code/libs/assimp/include/assimp/aabb.h \
+ /home/shalash/Code/lib/assimp/include/assimp/scene.h \
+ /home/shalash/Code/lib/assimp/include/assimp/texture.h \
+ /home/shalash/Code/lib/assimp/include/assimp/Compiler/pushpack1.h \
+ /home/shalash/Code/lib/assimp/include/assimp/Compiler/poppack1.h \
+ /home/shalash/Code/lib/assimp/include/assimp/mesh.h \
+ /home/shalash/Code/lib/assimp/include/assimp/aabb.h \
  /usr/include/c++/14/unordered_set \
  /usr/include/c++/14/bits/unordered_set.h \
- /home/pailiah/Code/libs/assimp/include/assimp/light.h \
- /home/pailiah/Code/libs/assimp/include/assimp/camera.h \
- /home/pailiah/Code/libs/assimp/include/assimp/material.h \
- /home/pailiah/Code/libs/assimp/include/assimp/material.inl \
- /home/pailiah/Code/libs/assimp/include/assimp/anim.h \
- /home/pailiah/Code/libs/assimp/include/assimp/metadata.h \
- /home/pailiah/Code/libs/assimp/include/assimp/postprocess.h \
- /home/pailiah/Repos/Diss24/Engine/include/LucE/Buffers.hpp \
- /home/pailiah/Repos/Diss24/Engine/include/LucE/Shader.hpp \
- /usr/include/GLFW/glfw3.h \
- /home/pailiah/Code/libs/glm/glm/gtc/matrix_transform.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/matrix_projection.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/../gtc/constants.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/../gtc/../ext/scalar_constants.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/../gtc/../ext/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/../gtc/../ext/scalar_constants.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/../gtc/constants.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/matrix_projection.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/matrix_clip_space.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/matrix_clip_space.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/matrix_transform.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../ext/matrix_transform.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/matrix_transform.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/type_ptr.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/quaternion.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_relational.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_relational.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../detail/type_float.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_common.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../ext/quaternion_geometric.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../ext/quaternion_geometric.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_common.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_float.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../detail/type_quat.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../detail/../ext/quaternion_relational.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../detail/../ext/quaternion_relational.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/../detail/type_quat.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_float_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_double.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_double_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_trigonometric.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_trigonometric.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_transform.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/quaternion_transform.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/quaternion.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/epsilon.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../detail/setup.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/epsilon.inl \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/vec1.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_bool1.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_bool1_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_float1.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_float1_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_double1.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_double1_precision.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_int1.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_int1_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_uint1.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/../gtc/../ext/vector_uint1_sized.hpp \
- /home/pailiah/Code/libs/glm/glm/gtc/type_ptr.inl \
- /home/pailiah/Repos/Diss24/Engine/include/stb_image.h \
+ /home/shalash/Code/lib/assimp/include/assimp/light.h \
+ /home/shalash/Code/lib/assimp/include/assimp/camera.h \
+ /home/shalash/Code/lib/assimp/include/assimp/material.h \
+ /home/shalash/Code/lib/assimp/include/assimp/material.inl \
+ /home/shalash/Code/lib/assimp/include/assimp/anim.h \
+ /home/shalash/Code/lib/assimp/include/assimp/metadata.h \
+ /home/shalash/Code/lib/assimp/include/assimp/postprocess.h \
+ /home/shalash/Repos/Diss24/engine/include/LucE/Buffers.hpp \
+ /home/shalash/Repos/Diss24/engine/include/LucE/Shader.hpp \
+ /usr/include/GLFW/glfw3.h /usr/include/glm/gtc/matrix_transform.hpp \
+ /usr/include/glm/ext/matrix_projection.hpp \
+ /usr/include/glm/gtc/constants.hpp \
+ /usr/include/glm/ext/scalar_constants.hpp \
+ /usr/include/glm/ext/scalar_constants.inl \
+ /usr/include/glm/gtc/constants.inl \
+ /usr/include/glm/ext/matrix_projection.inl \
+ /usr/include/glm/ext/matrix_clip_space.hpp \
+ /usr/include/glm/ext/matrix_clip_space.inl \
+ /usr/include/glm/ext/matrix_transform.hpp \
+ /usr/include/glm/ext/matrix_transform.inl \
+ /usr/include/glm/gtc/matrix_transform.inl \
+ /usr/include/glm/gtc/type_ptr.hpp /usr/include/glm/gtc/quaternion.hpp \
+ /usr/include/glm/ext/vector_relational.hpp \
+ /usr/include/glm/ext/vector_relational.inl \
+ /usr/include/glm/detail/type_float.hpp \
+ /usr/include/glm/ext/quaternion_common.hpp \
+ /usr/include/glm/ext/quaternion_geometric.hpp \
+ /usr/include/glm/ext/quaternion_geometric.inl \
+ /usr/include/glm/ext/quaternion_common.inl \
+ /usr/include/glm/ext/quaternion_float.hpp \
+ /usr/include/glm/detail/type_quat.hpp \
+ /usr/include/glm/ext/quaternion_relational.hpp \
+ /usr/include/glm/ext/quaternion_relational.inl \
+ /usr/include/glm/detail/type_quat.inl \
+ /usr/include/glm/ext/quaternion_float_precision.hpp \
+ /usr/include/glm/ext/quaternion_double.hpp \
+ /usr/include/glm/ext/quaternion_double_precision.hpp \
+ /usr/include/glm/ext/quaternion_trigonometric.hpp \
+ /usr/include/glm/ext/quaternion_trigonometric.inl \
+ /usr/include/glm/ext/quaternion_transform.hpp \
+ /usr/include/glm/ext/quaternion_transform.inl \
+ /usr/include/glm/gtc/quaternion.inl /usr/include/glm/gtc/epsilon.hpp \
+ /usr/include/glm/detail/setup.hpp /usr/include/glm/gtc/epsilon.inl \
+ /usr/include/glm/gtc/vec1.hpp /usr/include/glm/ext/vector_bool1.hpp \
+ /usr/include/glm/ext/vector_bool1_precision.hpp \
+ /usr/include/glm/ext/vector_float1.hpp \
+ /usr/include/glm/ext/vector_float1_precision.hpp \
+ /usr/include/glm/ext/vector_double1.hpp \
+ /usr/include/glm/ext/vector_double1_precision.hpp \
+ /usr/include/glm/ext/vector_int1.hpp \
+ /usr/include/glm/ext/vector_int1_sized.hpp \
+ /usr/include/glm/ext/vector_uint1.hpp \
+ /usr/include/glm/ext/vector_uint1_sized.hpp \
+ /usr/include/glm/gtc/type_ptr.inl \
+ /home/shalash/Repos/Diss24/engine/include/stb_image.h \
  /usr/include/c++/14/stdlib.h /usr/include/c++/14/iostream \
  /usr/include/c++/14/ostream /usr/include/c++/14/ios \
  /usr/include/c++/14/bits/ios_base.h /usr/include/c++/14/ext/atomicity.h \

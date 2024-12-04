@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pailiah/Repos/Diss24/Engine
+CMAKE_SOURCE_DIR = /home/shalash/Repos/Diss24/engine
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pailiah/Repos/Diss24/Engine/Debug
+CMAKE_BINARY_DIR = /home/shalash/Repos/Diss24/engine/Debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/translucency_engine.dir/depend.make
@@ -70,88 +70,88 @@ include CMakeFiles/translucency_engine.dir/progress.make
 include CMakeFiles/translucency_engine.dir/flags.make
 
 CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o: CMakeFiles/translucency_engine.dir/flags.make
-CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o: /home/pailiah/Repos/Diss24/Engine/src/Buffers.cpp
+CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o: /home/shalash/Repos/Diss24/engine/src/Buffers.cpp
 CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o: CMakeFiles/translucency_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o -c /home/pailiah/Repos/Diss24/Engine/src/Buffers.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Buffers.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Buffers.cpp
 
 CMakeFiles/translucency_engine.dir/src/Buffers.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/translucency_engine.dir/src/Buffers.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pailiah/Repos/Diss24/Engine/src/Buffers.cpp > CMakeFiles/translucency_engine.dir/src/Buffers.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/shalash/Repos/Diss24/engine/src/Buffers.cpp > CMakeFiles/translucency_engine.dir/src/Buffers.cpp.i
 
 CMakeFiles/translucency_engine.dir/src/Buffers.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/translucency_engine.dir/src/Buffers.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pailiah/Repos/Diss24/Engine/src/Buffers.cpp -o CMakeFiles/translucency_engine.dir/src/Buffers.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/shalash/Repos/Diss24/engine/src/Buffers.cpp -o CMakeFiles/translucency_engine.dir/src/Buffers.cpp.s
 
 CMakeFiles/translucency_engine.dir/src/Camera.cpp.o: CMakeFiles/translucency_engine.dir/flags.make
-CMakeFiles/translucency_engine.dir/src/Camera.cpp.o: /home/pailiah/Repos/Diss24/Engine/src/Camera.cpp
+CMakeFiles/translucency_engine.dir/src/Camera.cpp.o: /home/shalash/Repos/Diss24/engine/src/Camera.cpp
 CMakeFiles/translucency_engine.dir/src/Camera.cpp.o: CMakeFiles/translucency_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/translucency_engine.dir/src/Camera.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Camera.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Camera.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Camera.cpp.o -c /home/pailiah/Repos/Diss24/Engine/src/Camera.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/translucency_engine.dir/src/Camera.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Camera.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Camera.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Camera.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Camera.cpp
 
 CMakeFiles/translucency_engine.dir/src/Camera.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/translucency_engine.dir/src/Camera.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pailiah/Repos/Diss24/Engine/src/Camera.cpp > CMakeFiles/translucency_engine.dir/src/Camera.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/shalash/Repos/Diss24/engine/src/Camera.cpp > CMakeFiles/translucency_engine.dir/src/Camera.cpp.i
 
 CMakeFiles/translucency_engine.dir/src/Camera.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/translucency_engine.dir/src/Camera.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pailiah/Repos/Diss24/Engine/src/Camera.cpp -o CMakeFiles/translucency_engine.dir/src/Camera.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/shalash/Repos/Diss24/engine/src/Camera.cpp -o CMakeFiles/translucency_engine.dir/src/Camera.cpp.s
 
 CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o: CMakeFiles/translucency_engine.dir/flags.make
-CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o: /home/pailiah/Repos/Diss24/Engine/src/Mesh.cpp
+CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o: /home/shalash/Repos/Diss24/engine/src/Mesh.cpp
 CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o: CMakeFiles/translucency_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o -c /home/pailiah/Repos/Diss24/Engine/src/Mesh.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Mesh.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Mesh.cpp
 
 CMakeFiles/translucency_engine.dir/src/Mesh.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/translucency_engine.dir/src/Mesh.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pailiah/Repos/Diss24/Engine/src/Mesh.cpp > CMakeFiles/translucency_engine.dir/src/Mesh.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/shalash/Repos/Diss24/engine/src/Mesh.cpp > CMakeFiles/translucency_engine.dir/src/Mesh.cpp.i
 
 CMakeFiles/translucency_engine.dir/src/Mesh.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/translucency_engine.dir/src/Mesh.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pailiah/Repos/Diss24/Engine/src/Mesh.cpp -o CMakeFiles/translucency_engine.dir/src/Mesh.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/shalash/Repos/Diss24/engine/src/Mesh.cpp -o CMakeFiles/translucency_engine.dir/src/Mesh.cpp.s
 
 CMakeFiles/translucency_engine.dir/src/Model.cpp.o: CMakeFiles/translucency_engine.dir/flags.make
-CMakeFiles/translucency_engine.dir/src/Model.cpp.o: /home/pailiah/Repos/Diss24/Engine/src/Model.cpp
+CMakeFiles/translucency_engine.dir/src/Model.cpp.o: /home/shalash/Repos/Diss24/engine/src/Model.cpp
 CMakeFiles/translucency_engine.dir/src/Model.cpp.o: CMakeFiles/translucency_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/translucency_engine.dir/src/Model.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Model.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Model.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Model.cpp.o -c /home/pailiah/Repos/Diss24/Engine/src/Model.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/translucency_engine.dir/src/Model.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Model.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Model.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Model.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Model.cpp
 
 CMakeFiles/translucency_engine.dir/src/Model.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/translucency_engine.dir/src/Model.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pailiah/Repos/Diss24/Engine/src/Model.cpp > CMakeFiles/translucency_engine.dir/src/Model.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/shalash/Repos/Diss24/engine/src/Model.cpp > CMakeFiles/translucency_engine.dir/src/Model.cpp.i
 
 CMakeFiles/translucency_engine.dir/src/Model.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/translucency_engine.dir/src/Model.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pailiah/Repos/Diss24/Engine/src/Model.cpp -o CMakeFiles/translucency_engine.dir/src/Model.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/shalash/Repos/Diss24/engine/src/Model.cpp -o CMakeFiles/translucency_engine.dir/src/Model.cpp.s
 
 CMakeFiles/translucency_engine.dir/src/Shader.cpp.o: CMakeFiles/translucency_engine.dir/flags.make
-CMakeFiles/translucency_engine.dir/src/Shader.cpp.o: /home/pailiah/Repos/Diss24/Engine/src/Shader.cpp
+CMakeFiles/translucency_engine.dir/src/Shader.cpp.o: /home/shalash/Repos/Diss24/engine/src/Shader.cpp
 CMakeFiles/translucency_engine.dir/src/Shader.cpp.o: CMakeFiles/translucency_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/translucency_engine.dir/src/Shader.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Shader.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Shader.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Shader.cpp.o -c /home/pailiah/Repos/Diss24/Engine/src/Shader.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/translucency_engine.dir/src/Shader.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/Shader.cpp.o -MF CMakeFiles/translucency_engine.dir/src/Shader.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/Shader.cpp.o -c /home/shalash/Repos/Diss24/engine/src/Shader.cpp
 
 CMakeFiles/translucency_engine.dir/src/Shader.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/translucency_engine.dir/src/Shader.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pailiah/Repos/Diss24/Engine/src/Shader.cpp > CMakeFiles/translucency_engine.dir/src/Shader.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/shalash/Repos/Diss24/engine/src/Shader.cpp > CMakeFiles/translucency_engine.dir/src/Shader.cpp.i
 
 CMakeFiles/translucency_engine.dir/src/Shader.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/translucency_engine.dir/src/Shader.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pailiah/Repos/Diss24/Engine/src/Shader.cpp -o CMakeFiles/translucency_engine.dir/src/Shader.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/shalash/Repos/Diss24/engine/src/Shader.cpp -o CMakeFiles/translucency_engine.dir/src/Shader.cpp.s
 
 CMakeFiles/translucency_engine.dir/src/main.cpp.o: CMakeFiles/translucency_engine.dir/flags.make
-CMakeFiles/translucency_engine.dir/src/main.cpp.o: /home/pailiah/Repos/Diss24/Engine/src/main.cpp
+CMakeFiles/translucency_engine.dir/src/main.cpp.o: /home/shalash/Repos/Diss24/engine/src/main.cpp
 CMakeFiles/translucency_engine.dir/src/main.cpp.o: CMakeFiles/translucency_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/translucency_engine.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/main.cpp.o -MF CMakeFiles/translucency_engine.dir/src/main.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/main.cpp.o -c /home/pailiah/Repos/Diss24/Engine/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/translucency_engine.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/translucency_engine.dir/src/main.cpp.o -MF CMakeFiles/translucency_engine.dir/src/main.cpp.o.d -o CMakeFiles/translucency_engine.dir/src/main.cpp.o -c /home/shalash/Repos/Diss24/engine/src/main.cpp
 
 CMakeFiles/translucency_engine.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/translucency_engine.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pailiah/Repos/Diss24/Engine/src/main.cpp > CMakeFiles/translucency_engine.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/shalash/Repos/Diss24/engine/src/main.cpp > CMakeFiles/translucency_engine.dir/src/main.cpp.i
 
 CMakeFiles/translucency_engine.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/translucency_engine.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pailiah/Repos/Diss24/Engine/src/main.cpp -o CMakeFiles/translucency_engine.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/shalash/Repos/Diss24/engine/src/main.cpp -o CMakeFiles/translucency_engine.dir/src/main.cpp.s
 
 # Object files for target translucency_engine
 translucency_engine_OBJECTS = \
@@ -172,12 +172,12 @@ translucency_engine: CMakeFiles/translucency_engine.dir/src/Model.cpp.o
 translucency_engine: CMakeFiles/translucency_engine.dir/src/Shader.cpp.o
 translucency_engine: CMakeFiles/translucency_engine.dir/src/main.cpp.o
 translucency_engine: CMakeFiles/translucency_engine.dir/build.make
-translucency_engine: /home/pailiah/Code/libs/glad/bin/gladlib.a
-translucency_engine: /home/pailiah/Code/libs/assimp/bin/libassimp.so
+translucency_engine: /home/shalash/Code/lib/glad/bin/gladlib.a
+translucency_engine: /home/shalash/Code/lib/assimp/bin/libassimp.so
 translucency_engine: /usr/lib64/libGLX.so
 translucency_engine: /usr/lib64/libOpenGL.so
 translucency_engine: CMakeFiles/translucency_engine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable translucency_engine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/shalash/Repos/Diss24/engine/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable translucency_engine"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/translucency_engine.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -189,6 +189,6 @@ CMakeFiles/translucency_engine.dir/clean:
 .PHONY : CMakeFiles/translucency_engine.dir/clean
 
 CMakeFiles/translucency_engine.dir/depend:
-	cd /home/pailiah/Repos/Diss24/Engine/Debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pailiah/Repos/Diss24/Engine /home/pailiah/Repos/Diss24/Engine /home/pailiah/Repos/Diss24/Engine/Debug /home/pailiah/Repos/Diss24/Engine/Debug /home/pailiah/Repos/Diss24/Engine/Debug/CMakeFiles/translucency_engine.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/shalash/Repos/Diss24/engine/Debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/shalash/Repos/Diss24/engine /home/shalash/Repos/Diss24/engine /home/shalash/Repos/Diss24/engine/Debug /home/shalash/Repos/Diss24/engine/Debug /home/shalash/Repos/Diss24/engine/Debug/CMakeFiles/translucency_engine.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/translucency_engine.dir/depend
 

@@ -12,7 +12,6 @@
 #include <stb_image.h>
 
 #include <iostream>
-#include <vector>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -31,7 +30,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(5.0f));
+Camera camera(glm::vec3(-2.0f, 3.0f, 3.0f));
 
 // input data
 bool rotatingLight = false;
@@ -66,26 +65,27 @@ int main()
     // compile shader programs
     // -----------------------
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     //Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
+    Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
     // object config
     // -------------
     //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
-    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
     /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
-    Light light{glm::vec3(-5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f)};
-    Model backpack((objDir + "/backpack/backpack.obj"));
-    std::cout << "Loaded Backpack Model\n"; 
+    Light light{glm::vec3(5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f)};
+    //Model backpack((objDir + "/backpack/backpack.obj"));
+		Model angel((objDir + "/statue/angel.obj"));
+    std::cout << "Loaded Models\n"; 
     unsigned int frameQuad = makeQuad();
 
-    Model* scene[] = {&backpack};
+    Model* scene[] = {&angel};
 
     std::cout << vTANGENT << std::endl;
 
@@ -93,7 +93,7 @@ int main()
     // -------------
     glm::mat4 model = glm::mat4(1.0f);
 
-    camera.lookAt(0.0f, 0.0f, 0.0f);
+    camera.lookAt(0.0f, 2.5f, 0.0f);
     glm::mat4 view = camera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/pailiah/Repos/Diss24/Engine/include -I/home/pailiah/Code/libs/assimp/include -I/home/pailiah/Code/libs/glad/include/glad -I/home/pailiah/Code/libs/glm
+CXX_INCLUDES = -I/home/shalash/Repos/Diss24/engine/include -I/home/shalash/Code/lib/assimp/include -I/home/shalash/Code/lib/glad/include -I/home/shalash/Repos/Diss24/engine/{LIB_DIR}/glm
 
-CXX_FLAGS = -g
+CXX_FLAGS = 
 
