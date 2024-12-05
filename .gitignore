@@ -1,3 +1,5 @@
 CMakeLists.txt
-build/
+Debug/
 .vscode/
+.cache/
+compile_commands.json
