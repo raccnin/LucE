@@ -1,5 +1,5 @@
 CMakeLists.txt
-/Debug/
+Debug/
 .vscode/
 .cache/
-/compile_commands.json
+compile_commands.json
