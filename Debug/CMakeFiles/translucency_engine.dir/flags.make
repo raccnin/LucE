@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/pailiah/Repos/Diss24/Engine/include -I/home/pailiah/Code/libs/assimp/include -I/home/pailiah/Code/libs/glad/include/glad -I/home/pailiah/Code/libs/glm
 
-CXX_FLAGS = -g
+CXX_FLAGS = 
 
