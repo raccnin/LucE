@@ -24,8 +24,8 @@ const float PI = 3.14159;
 
 // material
 vec3 albedo = vec3(0.5);
-float metallic = 0.0;
-float roughness = 0.5;
+float metallic = 0.5;
+float roughness = 0.1;
 float ao = 0.1;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0);

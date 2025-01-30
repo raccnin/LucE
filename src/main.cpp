@@ -79,7 +79,7 @@ int main()
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
-    Light light{glm::vec3(5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f)};
+    Light light{glm::vec3(5.0f, 1.0f, 5.0f), glm::vec3(10.0f), glm::vec3(12.0f), glm::vec3(15.0f)};
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		Model angel((objDir + "/statue/angel.obj"));
     std::cout << "Loaded Models\n"; 
@@ -124,6 +124,8 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+				glm::vec3 lightPos = glm::vec3(4 * sin(glfwGetTime()), 4.0f, 4 * cos(glfwGetTime()));
+				light.position = lightPos;
 
         float time = glfwGetTime();
 
