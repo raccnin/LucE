@@ -1,8 +1,10 @@
+#include "LucE/Light.hpp"
 #include <LucE/Camera.hpp>
 #include <LucE/Shader.hpp>
 #include <LucE/Mesh.hpp>
 #include <LucE/Model.hpp>
 #include <LucE/Buffers.hpp>
+
 
 #include <glad.h>
 #include <GLFW/glfw3.h>
@@ -64,22 +66,22 @@ int main()
 
     // compile shader programs
     // -----------------------
+    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     //Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
     Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
     // object config
     // -------------
+    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
     //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
-    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
     /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
-    Light light{glm::vec3(5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f)};
+    SpotLight light(glm::vec3(5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f), glm::vec3(1.0f), 20);
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		Model angel((objDir + "/statue/angel.obj"));
     std::cout << "Loaded Models\n"; 
