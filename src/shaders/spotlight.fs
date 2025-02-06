@@ -7,7 +7,8 @@ struct Light
     vec3 specular;
 
 		vec3 direction;
-		float cutoff;
+		float innerCutoff;
+		float outerCutoff;
 };
 
 struct Material
@@ -37,7 +38,7 @@ void main()
 	vec3 spotDirection = normalize(light.direction);
 	float theta = dot(L, -spotDirection); // cosine of angle
 
-	if (theta > light.cutoff)
+	if (theta > light.outerCutoff)
 	{
 		// ambient
 		vec3 ambient = light.ambient * albedo;
@@ -52,6 +53,14 @@ void main()
 		vec3 H = normalize(L + V);
 		float spec = pow(max(dot(N, H), 0.0), 32.0);
 		vec3 specular = light.specular * (spec * albedo);
+
+		// smooth edges
+		float epsilon = light.innerCutoff - light.outerCutoff;
+		float intensity = (theta - light.outerCutoff) / epsilon;
+
+		diffuse *= intensity;
+		specular *= intensity;
+
 
 		vec3 phongResult = ambient + diffuse + specular;
 

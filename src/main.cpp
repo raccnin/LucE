@@ -39,6 +39,7 @@ bool rotatingLight = false;
 
 int main()
 {
+		// invert y coordinates for GL to use properly
     stbi_set_flip_vertically_on_load(true);
 
 		std::string title = "OpenGL";
@@ -92,9 +93,10 @@ int main()
 		// ------------
 		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
 		glm::vec3 spotlightDir = angel.worldPos - lightPos;
-		spotlightDir.y = 1.0f;
-		float spotlightCutoff = cos(glm::radians(5.0f));
-    SpotLight light(lightPos, glm::vec3(0.01f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightCutoff);
+		spotlightDir.y = 0.5f;
+		float spotlightInnerCutoff = cos(glm::radians(1.0f));
+		float spotlightOuterCutoff = cos(glm::radians(10.0f));
+    SpotLight light(lightPos, glm::vec3(0.01f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightInnerCutoff, spotlightOuterCutoff);
 		light.setUniforms(shader);
 
     // shader config
@@ -147,7 +149,7 @@ int main()
 
         // 2. clear buffers
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.5, 0, 0.5, 1.0);
+        glClearColor(0.2, 0, 0.2, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // 3. draw scene
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
