@@ -69,7 +69,7 @@ int main()
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight.fs").c_str());
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
     //Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
@@ -94,9 +94,9 @@ int main()
 		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
 		glm::vec3 spotlightDir = angel.worldPos - lightPos;
 		spotlightDir.y = 0.5f;
-		float spotlightInnerCutoff = cos(glm::radians(1.0f));
+		float spotlightInnerCutoff = cos(glm::radians(5.0f));
 		float spotlightOuterCutoff = cos(glm::radians(10.0f));
-    SpotLight light(lightPos, glm::vec3(0.01f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightInnerCutoff, spotlightOuterCutoff);
+    SpotLight light(lightPos, glm::vec3(0.0f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightInnerCutoff, spotlightOuterCutoff);
 		light.setUniforms(shader);
 
     // shader config
