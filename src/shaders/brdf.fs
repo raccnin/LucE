@@ -16,7 +16,7 @@ uniform vec3 camPos;
 void main()
 {
 	vec3 N = normalize(fs_in.Normal);
-	vec3 V = nomralize(camPos - fs_in.FragPos);
+	vec3 V = normalize(camPos - fs_in.FragPos);
 
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);

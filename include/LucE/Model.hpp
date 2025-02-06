@@ -45,7 +45,7 @@ class Model
             this->orientAxis = glm::vec3(0.0f, 1.0f, 0.0f);
             loadModel(path);
         }
-        void draw(Shader &shader, Light &light);
+        void draw(Shader &shader);
         void setPos(glm::vec3 worldPos)
         {
             this->worldPos = worldPos;

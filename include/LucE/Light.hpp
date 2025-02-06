@@ -2,6 +2,9 @@
 #define LIGHT_H
 
 #include <glm/glm.hpp>
+#include <LucE/Shader.hpp>
+#include <glad.h>
+#include <iostream>
 
 class Light
 {
@@ -19,19 +22,36 @@ public:
 		this->diffuse = diffuse;
 		this->specular = specular;
 	}
+
+	virtual void setUniforms(Shader &shader)
+	{
+		//shader.use();
+		shader.setVec3("light.position", this->position);
+		shader.setVec3("light.ambient", this->ambient);
+		shader.setVec3("light.diffuse", this->diffuse);
+		shader.setVec3("light.specular", this->specular);
+		//glUseProgram(0);
+	}
 };
 
 class SpotLight: public Light
 {
 public:
 	glm::vec3 direction;
-	unsigned int cutoff;
+	float cutoff;
 
-	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction, unsigned int cutoff)
+	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction,  float cutoff)
 		: Light(position, ambient, diffuse, specular)
 	{
 		this->direction = direction;
 		this->cutoff = cutoff;
+	}
+
+	virtual void setUniforms(Shader &shader)
+	{
+		Light::setUniforms(shader);
+		shader.setVec3("light.direction", this->direction);
+		shader.setFloat("light.cutoff", this->cutoff);
 	}
 };
 

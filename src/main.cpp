@@ -68,8 +68,8 @@ int main()
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    //Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/shader3D_base.fs").c_str());
-    Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight.fs").c_str());
+    //Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
     // object config
@@ -81,7 +81,6 @@ int main()
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
-    SpotLight light(glm::vec3(5.0f, 1.0f, 5.0f), glm::vec3(20.0f), glm::vec3(22.0f), glm::vec3(25.0f), glm::vec3(1.0f), 20);
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		Model angel((objDir + "/statue/angel.obj"));
     std::cout << "Loaded Models\n"; 
@@ -89,7 +88,14 @@ int main()
 
     Model* scene[] = {&angel};
 
-    std::cout << vTANGENT << std::endl;
+		// light config
+		// ------------
+		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
+		glm::vec3 spotlightDir = angel.worldPos - lightPos;
+		spotlightDir.y = 1.0f;
+		float spotlightCutoff = cos(glm::radians(5.0f));
+    SpotLight light(lightPos, glm::vec3(0.01f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightCutoff);
+		light.setUniforms(shader);
 
     // shader config
     // -------------
@@ -128,6 +134,7 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
+				light.direction.y = cos(time);
 
         // set uniforms
         shader.use();
@@ -140,7 +147,7 @@ int main()
 
         // 2. clear buffers
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.5, 0, 0.5, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // 3. draw scene
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
@@ -243,9 +250,10 @@ void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf)
 void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Light &light, Shader &shader)
 {
     shader.use();
+		light.setUniforms(shader);
     for(unsigned int i = 0; i < nModels; i++)
     {
-        models[i]->draw(shader, light);
+        models[i]->draw(shader);
     }
     glUseProgram(0);
 }
