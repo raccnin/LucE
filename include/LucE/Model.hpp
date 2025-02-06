@@ -3,12 +3,15 @@
 
 #include <LucE/Shader.hpp>
 #include <LucE/Mesh.hpp>
+#include <LucE/Light.hpp>
 
 #include <vector>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+/*
 struct Light
 {
     glm::vec3 position;
@@ -17,7 +20,7 @@ struct Light
     glm::vec3 diffuse;
     glm::vec3 specular;
 };
-
+*/
 
 struct Material
 {
@@ -42,7 +45,7 @@ class Model
             this->orientAxis = glm::vec3(0.0f, 1.0f, 0.0f);
             loadModel(path);
         }
-        void draw(Shader &shader, Light &light);
+        void draw(Shader &shader);
         void setPos(glm::vec3 worldPos)
         {
             this->worldPos = worldPos;

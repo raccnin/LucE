@@ -14,6 +14,9 @@ class Camera
         void lookAt(glm::vec3 target);
         void lookAt(float x, float y, float z);
         void setPos(glm::vec3 worldPos);
+				glm::vec3 getTarget(){
+					return this->targetPos;
+				}
         glm::vec3 up;    
         glm::vec3 worldPos;
 
