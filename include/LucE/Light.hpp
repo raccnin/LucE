@@ -38,20 +38,23 @@ class SpotLight: public Light
 {
 public:
 	glm::vec3 direction;
-	float cutoff;
+	float outerCutoff;
+	float innerCutoff;
 
-	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction,  float cutoff)
+	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction,  float innerCutoff, float outerCutoff)
 		: Light(position, ambient, diffuse, specular)
 	{
 		this->direction = direction;
-		this->cutoff = cutoff;
+		this->outerCutoff = outerCutoff;
+		this->innerCutoff = innerCutoff;
 	}
 
 	virtual void setUniforms(Shader &shader)
 	{
 		Light::setUniforms(shader);
 		shader.setVec3("light.direction", this->direction);
-		shader.setFloat("light.cutoff", this->cutoff);
+		shader.setFloat("light.innerCutoff", this->innerCutoff);
+		shader.setFloat("light.outerCutoff", this->outerCutoff);
 	}
 };
 
