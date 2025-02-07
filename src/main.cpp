@@ -93,10 +93,9 @@ int main()
 		// light config
 		// ------------
 		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
-		glm::vec3 spotlightDir = glm::normalize((angel.worldPos - lightPos) + glm::vec3(0.0f, 2.0f, 0.0f));
 		float spotlightInnerCutoff = cos(glm::radians(5.0f));
 		float spotlightOuterCutoff = cos(glm::radians(10.0f));
-    SpotLight light(lightPos, glm::vec3(0.0f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightInnerCutoff, spotlightOuterCutoff);
+    SpotLight light(lightPos, glm::vec3(0.0f), glm::vec3(0.5f), glm::vec3(1.0f), angel.worldPos, spotlightInnerCutoff, spotlightOuterCutoff);
 
 		// shadow mapping transform
 		const unsigned int SHADOW_WIDTH = 1024;
@@ -121,7 +120,6 @@ int main()
     frameShader.use();
     frameShader.setInt("frameTexture", 0);
 
-    
     // framebuffer (Post-Processing)
     // -----------------------------
 		Framebuffer depthMap(SHADOW_WIDTH, SHADOW_HEIGHT, GL_DEPTH_COMPONENT);
@@ -142,7 +140,8 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-				//light.direction.y = cos(time);
+				light.lookAt(glm::vec3(0.0f, cos(time)+2.0f, 0.0f));
+				Matrices.fillIdx(VIEW, light.getViewMatrix());
 
         // set uniforms
         shader.use();
@@ -155,6 +154,7 @@ int main()
 				depthMap.use();
 				glClear(GL_DEPTH_BUFFER_BIT);
 				// configure shader for light perspective
+				// lightProjectionView ?
 				
 
         // render to frame buffer

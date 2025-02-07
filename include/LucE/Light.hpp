@@ -42,14 +42,14 @@ public:
 	float outerCutoff;
 	float innerCutoff;
 
-	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction,  float innerCutoff, float outerCutoff)
-		: direction(direction), outerCutoff(outerCutoff), innerCutoff(innerCutoff), 
-			camera(position, glm::vec3(0.0f, 1.0f, 0.0f), position + direction),  // direction of camera different from direction of spotlight
+	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 target,  float innerCutoff, float outerCutoff)
+		: direction(target - position), outerCutoff(outerCutoff), innerCutoff(innerCutoff), target(target), 
+			camera(position, glm::vec3(0.0f, 1.0f, 0.0f), target),  
 			Light(position, ambient, diffuse, specular)
 	{
 	}
 
-	virtual void setUniforms(Shader &shader)
+virtual void setUniforms(Shader &shader)
 	{
 		Light::setUniforms(shader);
 		shader.setVec3("light.direction", this->direction);
@@ -61,7 +61,14 @@ public:
 	{
 		return this->camera.getViewMatrix();
 	}
+
+	void lookAt(glm::vec3 target)
+	{
+		this->direction = target - this->position;
+		this->camera.lookAt(target);
+	}
 private:
+	glm::vec3 target;
 	Camera camera;
 };
 
