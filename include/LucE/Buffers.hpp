@@ -18,7 +18,6 @@ class UniformMat4Buf
 
 enum TransformIdx
 {
-    MODEL,
     VIEW,
     PROJECTION
 };

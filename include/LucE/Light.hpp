@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <LucE/Shader.hpp>
+#include <LucE/Camera.hpp>
 #include <glad.h>
 #include <iostream>
 
@@ -42,11 +43,10 @@ public:
 	float innerCutoff;
 
 	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction,  float innerCutoff, float outerCutoff)
-		: Light(position, ambient, diffuse, specular)
+		: direction(direction), outerCutoff(outerCutoff), innerCutoff(innerCutoff), 
+			camera(position, glm::vec3(0.0f, 1.0f, 0.0f), position + direction),  // direction of camera different from direction of spotlight
+			Light(position, ambient, diffuse, specular)
 	{
-		this->direction = direction;
-		this->outerCutoff = outerCutoff;
-		this->innerCutoff = innerCutoff;
 	}
 
 	virtual void setUniforms(Shader &shader)
@@ -56,6 +56,13 @@ public:
 		shader.setFloat("light.innerCutoff", this->innerCutoff);
 		shader.setFloat("light.outerCutoff", this->outerCutoff);
 	}
+
+	glm::mat4 getViewMatrix()
+	{
+		return this->camera.getViewMatrix();
+	}
+private:
+	Camera camera;
 };
 
 #endif

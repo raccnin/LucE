@@ -21,10 +21,11 @@ public:
     unsigned int filterMax; // filtering mode if texture pixels > screen pixels
     // constructor (sets default texture modes)
     Texture2D();
+		Texture2D(unsigned int internalFormat);
     // generates texture from image data
-    void Generate(unsigned int width, unsigned int height, unsigned char* data);
+    void generate(unsigned int width, unsigned int height, unsigned char* data);
     // binds the texture as the current active GL_TEXTURE_2D texture object
-    void Bind() const;
+    void bind() const;
 };
 
 #endif
