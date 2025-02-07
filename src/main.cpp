@@ -67,16 +67,16 @@ int main()
 
     // compile shader programs
     // -----------------------
-    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
+    //std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
     //Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
     // object config
     // -------------
-    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
+    //std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
     /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
@@ -167,7 +167,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-        drawQuad(frameQuad,screenBuffer.colourBuffer, frameShader);
+        drawQuad(frameQuad,screenBuffer.colourBuffer.ID, frameShader);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

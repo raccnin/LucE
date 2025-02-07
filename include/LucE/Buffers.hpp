@@ -3,6 +3,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include "Texture.hpp"
 #include "Shader.hpp"
 
 class UniformMat4Buf
@@ -27,7 +28,7 @@ class Framebuffer
 {
     public:
         unsigned int ID;
-        unsigned int colourBuffer;
+        Texture2D colourBuffer;
 
         Framebuffer(unsigned int width, unsigned int height, GLenum internal_format = GL_RGB);
         void use(){
