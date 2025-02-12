@@ -2,6 +2,7 @@
 #define LIGHT_H
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <LucE/Shader.hpp>
 #include <LucE/Camera.hpp>
 #include <glad.h>
@@ -45,7 +46,8 @@ public:
 	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 target,  float innerCutoff, float outerCutoff)
 		: direction(target - position), outerCutoff(outerCutoff), innerCutoff(innerCutoff), target(target), 
 			camera(position, glm::vec3(0.0f, 1.0f, 0.0f), target),  
-			Light(position, ambient, diffuse, specular)
+			Light(position, ambient, diffuse, specular),
+			projection(glm::perspective(acos(outerCutoff), 1.0, 0.1, 1000.0))
 	{
 	}
 
@@ -62,6 +64,11 @@ virtual void setUniforms(Shader &shader)
 		return this->camera.getViewMatrix();
 	}
 
+	glm::mat4 getTransformMatrix()
+	{
+		return this->projection * this->camera.getViewMatrix();
+	}
+
 	void lookAt(glm::vec3 target)
 	{
 		this->direction = target - this->position;
@@ -70,6 +77,7 @@ virtual void setUniforms(Shader &shader)
 private:
 	glm::vec3 target;
 	Camera camera;
+	glm::mat4 projection;
 };
 
 #endif

@@ -23,10 +23,13 @@ void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shad
 void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader);
 GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
 void setShaderUniforms(Shader &shader);
+void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+const unsigned int SHADOW_WIDTH = 1024;
+const unsigned int SHADOW_HEIGHT = 1024;
 
 // timing
 float deltaTime = 0.0f;
@@ -71,7 +74,7 @@ int main()
     //std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
-    //Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
+		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 
     // object config
@@ -97,10 +100,6 @@ int main()
 		float spotlightOuterCutoff = cos(glm::radians(10.0f));
     SpotLight light(lightPos, glm::vec3(0.0f), glm::vec3(0.5f), glm::vec3(1.0f), angel.worldPos, spotlightInnerCutoff, spotlightOuterCutoff);
 
-		// shadow mapping transform
-		const unsigned int SHADOW_WIDTH = 1024;
-		const unsigned int SHADOW_HEIGHT = 1024;
-			
 
     // shader config
     // -------------
@@ -141,21 +140,15 @@ int main()
 
         float time = glfwGetTime();
 				light.lookAt(glm::vec3(0.0f, cos(time)+2.0f, 0.0f));
-				Matrices.fillIdx(VIEW, light.getViewMatrix());
-
-        // set uniforms
-        shader.use();
-        shader.setVec3("viewPos", camera.worldPos);
+				//Matrices.fillIdx(VIEW, light.getViewMatrix());
 				
 				// generate depth map
 				// ------------------
 				// 1. render to depth map	
-				glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-				depthMap.use();
-				glClear(GL_DEPTH_BUFFER_BIT);
-				// configure shader for light perspective
-				// lightProjectionView ?
-				
+				renderToDepth(depthMap, depthShader, light, scene, sizeof(scene) / sizeof(*scene));
+
+        // set uniforms
+				setShaderUniforms(shader);
 
         // render to frame buffer
         // ----------------------
@@ -304,5 +297,18 @@ GLFWwindow* setup_window( unsigned const int scr_width, unsigned const int scr_h
 
 void setShaderUniforms(Shader &shader)
 {
-	
+	shader.setVec3("viewPos", camera.worldPos);
+}
+
+void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels)
+{
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	depthBuffer.use();
+	depthShader.use();
+	depthShader.setMat4("lightTransform", light.getTransformMatrix());
+	drawScene(scene, nModels, light, depthShader);
+	// reset
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 }
