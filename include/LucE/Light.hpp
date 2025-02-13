@@ -47,7 +47,8 @@ public:
 		: direction(target - position), outerCutoff(outerCutoff), innerCutoff(innerCutoff), target(target), 
 			camera(position, glm::vec3(0.0f, 1.0f, 0.0f), target),  
 			Light(position, ambient, diffuse, specular),
-			projection(glm::perspective(acos(outerCutoff), 1.0, 0.1, 1000.0))
+			//projection(glm::perspective(acos(outerCutoff)*2.0, 1.0, 0.1, 1000.0)) // outerCutoff * 2 is FOV of light
+			projection(glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f))
 	{
 	}
 

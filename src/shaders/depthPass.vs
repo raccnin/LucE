@@ -8,4 +8,3 @@ void main()
 {
     gl_Position = lightTransform * model * vec4(aPos, 1.0);
 }
-

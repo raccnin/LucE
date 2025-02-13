@@ -76,6 +76,7 @@ int main()
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
 		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
+    Shader depthVisualiser = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/visualise_depth.fs").c_str());
 
     // object config
     // -------------
@@ -147,9 +148,6 @@ int main()
 				// 1. render to depth map	
 				renderToDepth(depthMap, depthShader, light, scene, sizeof(scene) / sizeof(*scene));
 
-        // set uniforms
-				setShaderUniforms(shader);
-
         // render to frame buffer
         // ----------------------
         // 1. bind MSAA framebuffer
@@ -176,7 +174,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-        drawQuad(frameQuad, screenBuffer, frameShader);
+        //drawQuad(frameQuad, screenBuffer, frameShader);
+				drawQuad(frameQuad, depthMap, depthVisualiser);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -272,6 +271,7 @@ void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Li
 void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader)
 {
         shader.use();
+				shader.setInt("frameTexture", 0);
 				buffer.colourBuffer.bind();
         glBindVertexArray(quadVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -302,10 +302,10 @@ void setShaderUniforms(Shader &shader)
 
 void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels)
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	depthBuffer.use();
 	depthShader.use();
+	glClear(GL_DEPTH_BUFFER_BIT);
 	depthShader.setMat4("lightTransform", light.getTransformMatrix());
 	drawScene(scene, nModels, light, depthShader);
 	// reset

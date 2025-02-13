@@ -2,5 +2,5 @@
 
 void main()
 {
-	// no write/read required w/ depth only
+	gl_FragDepth = gl_FragCoord.z;
 }

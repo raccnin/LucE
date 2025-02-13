@@ -9,6 +9,7 @@ layout (std140) uniform Matrices
     mat4 projection;
 };
 uniform mat4 model;
+uniform mat4 lightTransform;
 
 out VS_OUT {
     vec3 FragPos;
@@ -23,5 +24,6 @@ void main()
     vs_out.TexCoord = aTexCoord;
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
+		//gl_Position = lightTransform * vec4(aPos, 1.0); // visualising light transform
 }
 
