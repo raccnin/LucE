@@ -23,7 +23,7 @@ void main()
     vs_out.Normal = aNormal;
     vs_out.TexCoord = aTexCoord;
 
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-		//gl_Position = lightTransform * vec4(aPos, 1.0); // visualising light transform
+    //gl_Position = projection * view * model * vec4(aPos, 1.0);
+		gl_Position = lightTransform * vec4(aPos, 1.0); // visualising light transform
 }
 

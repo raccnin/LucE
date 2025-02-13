@@ -71,8 +71,8 @@ int main()
 
     // compile shader programs
     // -----------------------
-    //std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
+    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
 		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
@@ -80,8 +80,8 @@ int main()
 
     // object config
     // -------------
-    //std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
+    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
     /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
@@ -130,6 +130,7 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+        glEnable(GL_DEPTH_TEST);
         // input
         // -----
         processInput(window);
@@ -146,7 +147,13 @@ int main()
 				// generate depth map
 				// ------------------
 				// 1. render to depth map	
-				renderToDepth(depthMap, depthShader, light, scene, sizeof(scene) / sizeof(*scene));
+				glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+				depthMap.use();
+				glClear(GL_DEPTH_BUFFER_BIT);
+
+				depthShader.use();
+				depthShader.setMat4("lightTransform", light.getTransformMatrix());
+				drawScene(scene, sizeof(scene) / sizeof(*scene), light, depthShader);
 
         // render to frame buffer
         // ----------------------
@@ -155,10 +162,11 @@ int main()
 
         // 2. clear buffers
 				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-        glEnable(GL_DEPTH_TEST);
         glClearColor(0.2, 0, 0.2, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // 3. draw scene
+				shader.use();
+				shader.setMat4("lightTransform", light.getTransformMatrix());
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
         // condense MSAA buffer to single buffer
         blitBuffers(msBuffer, screenBuffer);
@@ -167,14 +175,15 @@ int main()
         // -------------------------
         // 1. bind to default
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
         // 2. disable depth test and clear buffers
         glDisable(GL_DEPTH_TEST);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+				glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-        //drawQuad(frameQuad, screenBuffer, frameShader);
+       	// drawQuad(frameQuad, screenBuffer, frameShader);
 				drawQuad(frameQuad, depthMap, depthVisualiser);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -271,6 +280,7 @@ void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Li
 void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader)
 {
         shader.use();
+				glActiveTexture(GL_TEXTURE0);
 				shader.setInt("frameTexture", 0);
 				buffer.colourBuffer.bind();
         glBindVertexArray(quadVAO);
