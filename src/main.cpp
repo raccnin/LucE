@@ -99,7 +99,7 @@ int main()
 		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
 		float spotlightInnerCutoff = cos(glm::radians(5.0f));
 		float spotlightOuterCutoff = cos(glm::radians(10.0f));
-    SpotLight light(lightPos, glm::vec3(0.0f), glm::vec3(0.5f), glm::vec3(1.0f), angel.worldPos, spotlightInnerCutoff, spotlightOuterCutoff);
+    SpotLight light(lightPos, glm::vec3(0.05f), glm::vec3(0.5f), glm::vec3(1.0f), angel.worldPos + glm::vec3(0.0f, 2.8f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
 
 
     // shader config
@@ -122,7 +122,7 @@ int main()
 
     // framebuffer (Post-Processing)
     // -----------------------------
-		Framebuffer depthMap(SHADOW_WIDTH, SHADOW_HEIGHT, GL_DEPTH_COMPONENT);
+		Framebuffer shadowMap(SHADOW_WIDTH, SHADOW_HEIGHT, GL_DEPTH_COMPONENT);
     msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4, GL_RGBA16F);
     Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
     
@@ -148,7 +148,7 @@ int main()
 				// ------------------
 				// 1. render to depth map	
 				glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-				depthMap.use();
+				shadowMap.use();
 				glClear(GL_DEPTH_BUFFER_BIT);
 
 				depthShader.use();
@@ -167,6 +167,9 @@ int main()
         // 3. draw scene
 				shader.use();
 				shader.setMat4("lightTransform", light.getTransformMatrix());
+				glActiveTexture(GL_TEXTURE0);
+				shadowMap.colourBuffer.bind();
+				shader.setInt("shadowMap", 0);
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
         // condense MSAA buffer to single buffer
         blitBuffers(msBuffer, screenBuffer);
@@ -183,8 +186,8 @@ int main()
 				glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-       	// drawQuad(frameQuad, screenBuffer, frameShader);
-				drawQuad(frameQuad, depthMap, depthVisualiser);
+       	 drawQuad(frameQuad, screenBuffer, frameShader);
+				//drawQuad(frameQuad, depthMap, depthVisualiser);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
