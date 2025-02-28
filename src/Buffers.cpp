@@ -1,4 +1,5 @@
 #include <LucE/Buffers.hpp>
+#include <LucE/Texture.hpp>
 
 #include <string>
 #include <glm/glm.hpp>
@@ -36,20 +37,29 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLenum interna
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
     // bind color attachment
-    glGenTextures(1, &colourBuffer);
-    glBindTexture(GL_TEXTURE_2D, colourBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBuffer, 0);
-    // create renderbuffer object for depth/stencil
-    unsigned int rbo;
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::FRAMEBUFFER::NOT_COMPLETE" << std::endl;
+		colourBuffer = Texture2D(internal_format);
+		colourBuffer.generate(width, height, NULL);
+
+		if (internal_format == GL_DEPTH_COMPONENT)
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, colourBuffer.ID, 0);
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		}
+	
+		else 
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBuffer.ID, 0);
+			// create renderbuffer object for depth/stencil
+		
+			unsigned int rbo;
+			glGenRenderbuffers(1, &rbo);
+			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+					std::cout << "ERROR::FRAMEBUFFER::NOT_COMPLETE" << std::endl;
+		}
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

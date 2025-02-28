@@ -20,12 +20,16 @@ void processInput(GLFWwindow *window);
 unsigned int makeQuad();
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
 void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader);
-void drawQuad(unsigned int quadVAO, unsigned int colourBuffer, Shader &shader);
+void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader);
 GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
+void setShaderUniforms(Shader &shader);
+void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+const unsigned int SHADOW_WIDTH = 1024;
+const unsigned int SHADOW_HEIGHT = 1024;
 
 // timing
 float deltaTime = 0.0f;
@@ -69,9 +73,10 @@ int main()
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight.fs").c_str());
-    //Shader shader = Shader((shaderDir+"/PBR_default.vs").c_str(), (shaderDir+"/PBR_brdf.fs").c_str());
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
+		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
+    Shader depthVisualiser = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/visualise_depth.fs").c_str());
 
     // object config
     // -------------
@@ -92,12 +97,10 @@ int main()
 		// light config
 		// ------------
 		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
-		glm::vec3 spotlightDir = angel.worldPos - lightPos;
-		spotlightDir.y = 0.5f;
-		float spotlightInnerCutoff = cos(glm::radians(1.0f));
+		float spotlightInnerCutoff = cos(glm::radians(5.0f));
 		float spotlightOuterCutoff = cos(glm::radians(10.0f));
-    SpotLight light(lightPos, glm::vec3(0.01f), glm::vec3(0.5f), glm::vec3(1.0f), spotlightDir, spotlightInnerCutoff, spotlightOuterCutoff);
-		light.setUniforms(shader);
+    SpotLight light(lightPos, glm::vec3(0.05f), glm::vec3(0.5f), glm::vec3(1.0f), angel.worldPos + glm::vec3(0.0f, 2.8f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
+
 
     // shader config
     // -------------
@@ -110,15 +113,16 @@ int main()
     glm::mat4 mats[] = {view, projection};
 
     UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
+		//Matrices.fillIdx(VIEW, light.getViewMatrix());
     shader.use();
     shader.setBlockBinding(Matrices.name, Matrices.bindIdx);
 
     frameShader.use();
     frameShader.setInt("frameTexture", 0);
 
-    
     // framebuffer (Post-Processing)
     // -----------------------------
+		Framebuffer shadowMap(SHADOW_WIDTH, SHADOW_HEIGHT, GL_DEPTH_COMPONENT);
     msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4, GL_RGBA16F);
     Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
     
@@ -126,6 +130,7 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+        glEnable(GL_DEPTH_TEST);
         // input
         // -----
         processInput(window);
@@ -136,11 +141,19 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-				light.direction.y = cos(time);
+				light.lookAt(glm::vec3(0.0f, cos(time)+2.0f, 0.0f));
+				//Matrices.fillIdx(VIEW, light.getViewMatrix());
+				
+				// generate depth map
+				// ------------------
+				// 1. render to depth map	
+				glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+				shadowMap.use();
+				glClear(GL_DEPTH_BUFFER_BIT);
 
-        // set uniforms
-        shader.use();
-        shader.setVec3("viewPos", camera.worldPos);
+				depthShader.use();
+				depthShader.setMat4("lightTransform", light.getTransformMatrix());
+				drawScene(scene, sizeof(scene) / sizeof(*scene), light, depthShader);
 
         // render to frame buffer
         // ----------------------
@@ -148,10 +161,15 @@ int main()
         msBuffer.use();
 
         // 2. clear buffers
-        glEnable(GL_DEPTH_TEST);
+				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClearColor(0.2, 0, 0.2, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // 3. draw scene
+				shader.use();
+				shader.setMat4("lightTransform", light.getTransformMatrix());
+				glActiveTexture(GL_TEXTURE0);
+				shadowMap.colourBuffer.bind();
+				shader.setInt("shadowMap", 0);
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
         // condense MSAA buffer to single buffer
         blitBuffers(msBuffer, screenBuffer);
@@ -160,14 +178,16 @@ int main()
         // -------------------------
         // 1. bind to default
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
         // 2. disable depth test and clear buffers
         glDisable(GL_DEPTH_TEST);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+				glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-        drawQuad(frameQuad,screenBuffer.colourBuffer, frameShader);
+       	 drawQuad(frameQuad, screenBuffer, frameShader);
+				//drawQuad(frameQuad, depthMap, depthVisualiser);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -260,10 +280,12 @@ void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Li
     glUseProgram(0);
 }
 
-void drawQuad(unsigned int quadVAO, unsigned int colourBuffer, Shader &shader)
+void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader)
 {
         shader.use();
-        glBindTexture(GL_TEXTURE_2D, colourBuffer);
+				glActiveTexture(GL_TEXTURE0);
+				shader.setInt("frameTexture", 0);
+				buffer.colourBuffer.bind();
         glBindVertexArray(quadVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
@@ -284,4 +306,22 @@ GLFWwindow* setup_window( unsigned const int scr_width, unsigned const int scr_h
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title.c_str(), NULL, NULL);
 	return window;
 
+}
+
+void setShaderUniforms(Shader &shader)
+{
+	shader.setVec3("viewPos", camera.worldPos);
+}
+
+void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels)
+{
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	depthBuffer.use();
+	depthShader.use();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	depthShader.setMat4("lightTransform", light.getTransformMatrix());
+	drawScene(scene, nModels, light, depthShader);
+	// reset
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 }

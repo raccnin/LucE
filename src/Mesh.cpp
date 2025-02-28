@@ -43,7 +43,7 @@ void Mesh::draw(Shader &shader)
     // format of: texture_{type}N
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
-    for (unsigned int i = 0; i < textures.size(); i++)
+    for (unsigned int i = 1; i < textures.size() + 1; i++) // texture unit 0 reserved for shadow map
     {
         // 1. bind next sampler
         glActiveTexture(GL_TEXTURE0+i);
