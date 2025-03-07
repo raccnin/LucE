@@ -36,7 +36,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(-4.0f, 3.0f, 6.0f));
+Camera camera(glm::vec3(-2.0f, 3.0f, 4.0f));
 
 
 int main()
@@ -95,13 +95,13 @@ int main()
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(2.0f, 2.8f, 3.0f);
-		glm::vec3 lightColour = glm::vec3(1.0f);
+		glm::vec3 lightPos = glm::vec3(2.5f, 2.5f, 3.5f);
+		glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
 		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
-		float spotlightInnerCutoff = cos(glm::radians(5.0f));
-		float spotlightOuterCutoff = cos(glm::radians(10.0f));
+		float spotlightInnerCutoff = cos(glm::radians(20.0f));
+		float spotlightOuterCutoff = cos(glm::radians(50.0f));
     SpotLight light(lightPos, lightColour, lightModelPath.c_str(), 
-										angel.worldPos + glm::vec3(0.0f, 2.8f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
+										angel.worldPos + glm::vec3(0.0f, 2.5f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
 
 
     // shader config
@@ -143,7 +143,7 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-				light.setPos(glm::vec3(2 * cos(time), 2.8f, 2 * sin(time)));
+				light.setPos(glm::vec3(1.5 * cos(time), light.position.y, 1.5 * sin(time)));
 				
 				// generate depth map
 				// ------------------
@@ -163,7 +163,7 @@ int main()
 
         // 2. clear buffers
 				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-        glClearColor(0.2, 0, 0.2, 1.0);
+        glClearColor(0.0, 0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // 3. draw scene
 				shader.use();

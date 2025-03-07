@@ -47,7 +47,7 @@ float calculateShadow(vec4 lightSpacePos, float bias)
 
 void main()
 {
-	vec3 albedo = vec3(0.5, 1.0, 0.5);
+	vec3 albedo = vec3(0.5, 0.5, 0.5);
 
 	vec3 L = normalize(light.position - fs_in.FragPos);
 	vec3 spotDirection = normalize(light.direction);
@@ -66,7 +66,7 @@ void main()
 		// specular
 		vec3 V = normalize(viewPos - fs_in.FragPos);
 		vec3 H = normalize(L + V);
-		float spec = pow(max(dot(N, H), 0.0), 32.0);
+		float spec = pow(max(dot(N, H), 0.0), 64.0);
 		vec3 specular = light.specular * (spec * albedo);
 
 		// smooth edges
@@ -76,7 +76,7 @@ void main()
 		diffuse *= intensity;
 		specular *= intensity;
 
-		float bias = max(0.00005 * (1.0 - dot(N, L)), 0.000005);
+		float bias = max(0.0005 * (1.0 - dot(N, L)), 0.00005);
 		float shadow = calculateShadow(fs_in.LightSpacePos, bias);
 		vec3 phongResult = ambient + ((1.0 - shadow) * (specular + diffuse));
 

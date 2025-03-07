@@ -13,10 +13,7 @@
 
 struct Material
 {
-    glm::vec3 diffuse;
-    glm::vec3 ambient;
-    glm::vec3 specular;
-    float shininess;
+	glm::vec3 albedo;
 };
 
 unsigned int TextureFromFile(const char* path, const std::string &directory);
