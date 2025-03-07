@@ -19,7 +19,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 unsigned int makeQuad();
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
-void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader);
+void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader, bool depthPass = false);
 void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader);
 GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
 void setShaderUniforms(Shader &shader);
@@ -36,10 +36,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(-2.0f, 3.0f, 3.0f));
+Camera camera(glm::vec3(-4.0f, 3.0f, 6.0f));
 
-// input data
-bool rotatingLight = false;
 
 int main()
 {
@@ -73,10 +71,11 @@ int main()
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_shadowed.fs").c_str());
+    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_sss.fs").c_str());
 		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
     Shader depthVisualiser = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/visualise_depth.fs").c_str());
+		Shader lightShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/light_frag.fs").c_str());
 
     // object config
     // -------------
@@ -96,10 +95,13 @@ int main()
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 3.0f);
+		glm::vec3 lightPos = glm::vec3(2.0f, 2.8f, 3.0f);
+		glm::vec3 lightColour = glm::vec3(1.0f);
+		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
 		float spotlightInnerCutoff = cos(glm::radians(5.0f));
 		float spotlightOuterCutoff = cos(glm::radians(10.0f));
-    SpotLight light(lightPos, glm::vec3(0.05f), glm::vec3(0.5f), glm::vec3(1.0f), angel.worldPos + glm::vec3(0.0f, 2.8f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
+    SpotLight light(lightPos, lightColour, lightModelPath.c_str(), 
+										angel.worldPos + glm::vec3(0.0f, 2.8f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
 
 
     // shader config
@@ -141,8 +143,7 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-				light.lookAt(glm::vec3(0.0f, cos(time)+2.0f, 0.0f));
-				//Matrices.fillIdx(VIEW, light.getViewMatrix());
+				light.setPos(glm::vec3(2 * cos(time), 2.8f, 2 * sin(time)));
 				
 				// generate depth map
 				// ------------------
@@ -153,7 +154,7 @@ int main()
 
 				depthShader.use();
 				depthShader.setMat4("lightTransform", light.getTransformMatrix());
-				drawScene(scene, sizeof(scene) / sizeof(*scene), light, depthShader);
+				drawScene(scene, sizeof(scene) / sizeof(*scene), light, depthShader, true);
 
         // render to frame buffer
         // ----------------------
@@ -171,6 +172,10 @@ int main()
 				shadowMap.colourBuffer.bind();
 				shader.setInt("shadowMap", 0);
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
+				
+				lightShader.use();
+				light.setUniforms(lightShader);
+				light.draw(lightShader);
         // condense MSAA buffer to single buffer
         blitBuffers(msBuffer, screenBuffer);
         
@@ -186,8 +191,8 @@ int main()
 				glClear(GL_COLOR_BUFFER_BIT);
 
         // 3. render quad with scene data
-       	 drawQuad(frameQuad, screenBuffer, frameShader);
-				//drawQuad(frameQuad, depthMap, depthVisualiser);
+       	drawQuad(frameQuad, screenBuffer, frameShader);
+				//drawQuad(frameQuad, shadowMap, depthVisualiser);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -207,8 +212,6 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        rotatingLight = !rotatingLight;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -269,7 +272,7 @@ void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf)
 
 }
 
-void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Light &light, Shader &shader)
+void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Light &light, Shader &shader, bool depthPass)
 {
     shader.use();
 		light.setUniforms(shader);

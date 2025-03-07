@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <LucE/Shader.hpp>
 #include <LucE/Camera.hpp>
+#include <LucE/Model.hpp>
 #include <glad.h>
 
 class Light
@@ -16,12 +17,16 @@ public:
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 
-	Light(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+	Model model;
+
+	Light(glm::vec3 position, glm::vec3 colour, const char* modelPath)
+	: position(position), 
+		ambient(colour * glm::vec3(0.1)),
+		diffuse(colour * glm::vec3(0.5)),
+		specular(colour),
+		model(modelPath)
 	{
-		this->position = position;
-		this->ambient = ambient;
-		this->diffuse = diffuse;
-		this->specular = specular;
+		model.setPos(position);
 	}
 
 	virtual void setUniforms(Shader &shader)
@@ -33,6 +38,17 @@ public:
 		shader.setVec3("light.specular", this->specular);
 		//glUseProgram(0);
 	}
+
+	void draw(Shader& shader)
+	{
+		this->model.draw(shader);
+	}
+
+	virtual void setPos(glm::vec3 worldPos)
+	{
+		model.setPos(worldPos);
+		position = worldPos;
+	}
 };
 
 class SpotLight: public Light
@@ -42,10 +58,10 @@ public:
 	float outerCutoff;
 	float innerCutoff;
 
-	SpotLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 target,  float innerCutoff, float outerCutoff)
+	SpotLight(glm::vec3 position, glm::vec3 colour, const char* modelPath, glm::vec3 target,  float innerCutoff, float outerCutoff)
 		: direction(target - position), outerCutoff(outerCutoff), innerCutoff(innerCutoff), target(target), 
 			camera(position, glm::vec3(0.0f, 1.0f, 0.0f), target),  
-			Light(position, ambient, diffuse, specular),
+			Light(position, colour, modelPath),
 			projection(glm::perspective(acos(outerCutoff)*2.0, 1.0, 0.1, 1000.0)) // outerCutoff * 2 is FOV of light
 			//projection(glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 7.5f))
 	{
@@ -71,13 +87,27 @@ virtual void setUniforms(Shader &shader)
 
 	void lookAt(glm::vec3 target)
 	{
-		this->direction = target - this->position;
-		this->camera.lookAt(target);
+		this->target = target;
+		updateVectors();
 	}
+
+	virtual void setPos(glm::vec3 worldPos)
+	{
+		Light::setPos(worldPos);
+		camera.setPos(worldPos);
+		updateVectors();
+	}
+
 private:
 	glm::vec3 target;
 	Camera camera;
 	glm::mat4 projection;
+
+	void updateVectors()
+	{
+		direction = target - this->position;
+		camera.lookAt(target);
+	}
 };
 
 #endif
