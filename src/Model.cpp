@@ -108,6 +108,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         }
     }
 
+		/*
+
     // process material
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -118,7 +120,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-
+		*/
     return Mesh(vertices, indices, textures);    
 }
 

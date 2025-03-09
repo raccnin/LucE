@@ -23,6 +23,7 @@ uniform vec3 viewPos;
 uniform Light light;
 uniform Material material;
 uniform sampler2D shadowMap;
+uniform sampler2D thicknessMap;
 
 
 in VS_OUT {
@@ -48,6 +49,7 @@ float calculateShadow(vec4 lightSpacePos, float bias)
 void main()
 {
 	vec3 albedo = vec3(0.5, 0.5, 0.5);
+	//vec3 albedo = texture(material.texture_diffuse1, fs_in.TexCoord).rgb;
 
 	vec3 L = normalize(light.position - fs_in.FragPos);
 	vec3 spotDirection = normalize(light.direction);
