@@ -88,5 +88,7 @@ void main()
 	{
 			FragColor = vec4(albedo * light.ambient, 1.0);
 	}
+
+	FragColor = texture(thicknessMap, fs_in.TexCoord);
 }
 

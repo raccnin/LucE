@@ -4,6 +4,7 @@
 #include <LucE/Mesh.hpp>
 #include <LucE/Model.hpp>
 #include <LucE/Buffers.hpp>
+#include <LucE/Texture.hpp>
 
 
 #include <glad.h>
@@ -36,7 +37,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(-2.0f, 3.0f, 4.0f));
+Camera camera(glm::vec3(-4.0f, 3.0f, 4.0f));
 
 
 int main()
@@ -70,7 +71,6 @@ int main()
     // compile shader programs
     // -----------------------
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    //std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_sss.fs").c_str());
 		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
@@ -88,27 +88,36 @@ int main()
     */
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		Model angel((objDir + "/statue/angel.obj"));
+		Model cube((objDir + "/cube/cube.obj"));
     std::cout << "Loaded Models\n"; 
     unsigned int frameQuad = makeQuad();
 
-    Model* scene[] = {&angel};
+    Model* scene[] = {&cube};
+
+		// load local thickness map
+		// ------------------------
+		int width, height, nrChannels;
+		unsigned char* map_data = stbi_load((objDir + "/cube/cube_thickness.png").c_str(), &width, &height, &nrChannels, 0);
+		Texture2D cubeThickness(GL_RGBA);
+		cubeThickness.generate(width, height, map_data);
+		stbi_image_free(map_data);
+		std::cout << "loaded cube thickness texture\n";
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(2.5f, 2.5f, 3.5f);
+		glm::vec3 lightPos = glm::vec3(2.0f, 1.0f, 2.0f);
 		glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
 		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
 		float spotlightInnerCutoff = cos(glm::radians(20.0f));
 		float spotlightOuterCutoff = cos(glm::radians(50.0f));
     SpotLight light(lightPos, lightColour, lightModelPath.c_str(), 
-										angel.worldPos + glm::vec3(0.0f, 2.5f, 0.0f), spotlightInnerCutoff, spotlightOuterCutoff);
+										cube.worldPos, spotlightInnerCutoff, spotlightOuterCutoff);
 
 
     // shader config
     // -------------
-    glm::mat4 model = glm::mat4(1.0f);
 
-    camera.lookAt(0.0f, 2.5f, 0.0f);
+    camera.lookAt(0.0f, 0.0f, 0.0f);
     glm::mat4 view = camera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
@@ -143,7 +152,8 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-				light.setPos(glm::vec3(1.5 * cos(time), light.position.y, 1.5 * sin(time)));
+				const float radius = 2.5f;
+				//light.setPos(glm::vec3(radius * cos(time), light.position.y, radius * sin(time)));
 				
 				// generate depth map
 				// ------------------
@@ -171,6 +181,11 @@ int main()
 				glActiveTexture(GL_TEXTURE0);
 				shadowMap.colourBuffer.bind();
 				shader.setInt("shadowMap", 0);
+				/*
+				glActiveTexture(GL_TEXTURE1);
+				cubeThickness.bind();
+				shader.setInt("thicknessMap", 1);
+				*/
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
 				
 				lightShader.use();
