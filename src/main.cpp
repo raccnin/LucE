@@ -101,11 +101,10 @@ int main()
 		Texture2D cubeThickness(GL_RGBA);
 		cubeThickness.generate(width, height, map_data);
 		stbi_image_free(map_data);
-		std::cout << "loaded cube thickness texture\n";
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(2.0f, 1.0f, 2.0f);
+		glm::vec3 lightPos = glm::vec3(0.0f, 1.5f, 0.0f);
 		glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
 		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
 		float spotlightInnerCutoff = cos(glm::radians(20.0f));
@@ -152,8 +151,8 @@ int main()
         lastFrame = currentFrame;
 
         float time = glfwGetTime();
-				const float radius = 2.5f;
-				//light.setPos(glm::vec3(radius * cos(time), light.position.y, radius * sin(time)));
+				const float radius = 2.0;
+				light.setPos(glm::vec3(radius * cos(time), light.position.y, radius * sin(time)));
 				
 				// generate depth map
 				// ------------------
@@ -181,11 +180,9 @@ int main()
 				glActiveTexture(GL_TEXTURE0);
 				shadowMap.colourBuffer.bind();
 				shader.setInt("shadowMap", 0);
-				/*
 				glActiveTexture(GL_TEXTURE1);
 				cubeThickness.bind();
 				shader.setInt("thicknessMap", 1);
-				*/
         drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
 				
 				lightShader.use();
