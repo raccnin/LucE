@@ -16,6 +16,30 @@ struct Material
 	glm::vec3 albedo;
 };
 
+class SSSMaterial
+{
+public:
+	float scattering;
+	float absorption;
+	float extinction;
+	float meanCosine;
+	float rri;
+
+	SSSMaterial(float scattering, float absorption, float rri, float meanCosine)
+	: scattering(scattering), absorption(absorption), extinction(scattering + absorption), meanCosine(meanCosine), rri(rri) 
+	{
+	}
+
+	void setUniforms(Shader& shader)
+	{
+		shader.setFloat("material.scattering", scattering);
+		shader.setFloat("material.absorption", absorption);
+		shader.setFloat("material.extinction", extinction);
+		shader.setFloat("material.meanCosine", meanCosine);
+		shader.setFloat("material.rri", rri);
+	}
+};
+
 unsigned int TextureFromFile(const char* path, const std::string &directory);
 
 class Model

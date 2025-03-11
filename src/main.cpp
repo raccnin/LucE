@@ -25,12 +25,16 @@ void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader);
 GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
 void setShaderUniforms(Shader &shader);
 void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels);
+std::vector<float> getDipoleDistribution(SSSMaterial& material);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
+
+const float PI = 3.141;
+const float E = 2.718;
 
 // timing
 float deltaTime = 0.0f;
@@ -89,22 +93,16 @@ int main()
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		Model angel((objDir + "/statue/angel.obj"));
 		Model cube((objDir + "/cube/cube.obj"));
+		SSSMaterial SSSMat(0.5, 0.5, 2.0, 0.5);
     std::cout << "Loaded Models\n"; 
     unsigned int frameQuad = makeQuad();
 
     Model* scene[] = {&cube};
 
-		// load local thickness map
-		// ------------------------
-		int width, height, nrChannels;
-		unsigned char* map_data = stbi_load((objDir + "/cube/cube_thickness.png").c_str(), &width, &height, &nrChannels, 0);
-		Texture2D cubeThickness(GL_RGBA);
-		cubeThickness.generate(width, height, map_data);
-		stbi_image_free(map_data);
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(0.0f, 1.5f, 0.0f);
+		glm::vec3 lightPos = glm::vec3(0.0f, 0.5f, 0.0f);
 		glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
 		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
 		float spotlightInnerCutoff = cos(glm::radians(20.0f));
@@ -135,6 +133,18 @@ int main()
 		Framebuffer shadowMap(SHADOW_WIDTH, SHADOW_HEIGHT, GL_DEPTH_COMPONENT);
     msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4, GL_RGBA16F);
     Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
+
+		// image space SSS calc
+		// --------------------
+	
+		// compute dipole approx table
+		std::vector<float> dipole_lookup = getDipoleDistribution(SSSMat);
+		std::cout << "dipole lookup: ";
+		for (float i : dipole_lookup)
+		{
+			std::cout << i << ",";
+		}
+		std::cout <<"\n";
     
     // render loop
     // -----------
@@ -149,64 +159,27 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+				float time = glfwGetTime();
 
-        float time = glfwGetTime();
-				const float radius = 2.0;
-				light.setPos(glm::vec3(radius * cos(time), light.position.y, radius * sin(time)));
-				
-				// generate depth map
-				// ------------------
-				// 1. render to depth map	
-				glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-				shadowMap.use();
-				glClear(GL_DEPTH_BUFFER_BIT);
+				// 1. render from light (shadowMap, splatMap)
+				// ------------------------------------------
 
-				depthShader.use();
-				depthShader.setMat4("lightTransform", light.getTransformMatrix());
-				drawScene(scene, sizeof(scene) / sizeof(*scene), light, depthShader, true);
 
-        // render to frame buffer
-        // ----------------------
-        // 1. bind MSAA framebuffer
-        msBuffer.use();
+				// 2. render from camera for world positions
+				// -----------------------------------------
+		
 
-        // 2. clear buffers
-				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-        glClearColor(0.0, 0, 0.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // 3. draw scene
-				shader.use();
-				shader.setMat4("lightTransform", light.getTransformMatrix());
-				glActiveTexture(GL_TEXTURE0);
-				shadowMap.colourBuffer.bind();
-				shader.setInt("shadowMap", 0);
-				glActiveTexture(GL_TEXTURE1);
-				cubeThickness.bind();
-				shader.setInt("thicknessMap", 1);
-        drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
-				
-				lightShader.use();
-				light.setUniforms(lightShader);
-				light.draw(lightShader);
-        // condense MSAA buffer to single buffer
-        blitBuffers(msBuffer, screenBuffer);
-        
-        // draw to framebuffer plane
-        // -------------------------
-        // 1. bind to default
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+				// 3. distribute SSS contribution on model
+				//    1. render splats
+				//    2. calculate single and multiple scattering at each splat point
+				//    3. alpha blend contribution of each point to scatter texture
+				//    4. apply scatter texture to object positions
 
-        // 2. disable depth test and clear buffers
-        glDisable(GL_DEPTH_TEST);
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
+				glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
 
-        // 3. render quad with scene data
-       	drawQuad(frameQuad, screenBuffer, frameShader);
-				//drawQuad(frameQuad, shadowMap, depthVisualiser);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -339,4 +312,51 @@ void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &lig
 	// reset
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+}
+
+float dipoleDistribution(int r, float pAlpha, float sigma_tr, float z_r, float z_v)
+{
+		float d_r = sqrt(pow(r, 2) + pow(z_r, 2));
+		float d_v = sqrt(pow(r, 2) + pow(z_v, 2));
+		
+		float sum_coeff = pAlpha / (4 * PI);
+		float augend_coeff = pow(E, -sigma_tr * d_r) / (d_r * d_r); 
+		float addend_coeff = pow(E, -sigma_tr * d_v) / (d_v * d_v); 
+
+		float augend = (z_r * (sigma_tr + (1/d_r))) * augend_coeff;
+		float addend = (z_v * (sigma_tr + (1/d_v))) * addend_coeff;
+		
+		return (sum_coeff * (augend + addend));
+}
+
+
+std::vector<float> getDipoleDistribution(SSSMaterial& material)
+{
+		// 1. compute R_d till R_d(d) < certain value that makes it negligible
+		// 2. store both this max distance and all values into a vector
+		// 3. generate distribution texture from this value
+		
+		// reduced coeffs
+		float pScatter = (1 - material.meanCosine) * material.scattering;
+		float pExtinction = material.absorption + pScatter;
+		float pAlpha = pScatter / pExtinction;
+		float sigma_tr = sqrt(3 * material.absorption * pExtinction);
+
+		// Fresnel and A (?)
+		float F_dr = (-1.440 / pow(material.rri, 2)) + (0.710 / material.rri) + 0.0668 + (0.636 * material.rri);
+		// may cause divide by 0?
+		float A = (1 + F_dr) / (1 - F_dr);	
+
+		// dipole distances
+		float z_r = 1 / pExtinction;
+		float z_v = z_r * (1 + (4 * A) / 3);
+
+		int r = 0;
+		std::vector<float> distribution;
+
+	do {
+		distribution.push_back(dipoleDistribution(++r, pAlpha, sigma_tr, z_r, z_v));
+	} while (distribution.back() > 0.000001);
+
+	return distribution;
 }

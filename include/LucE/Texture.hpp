@@ -14,6 +14,7 @@ public:
     // texture Format
     unsigned int internalFormat; // format of texture object
     unsigned int imageFormat; // format of loaded image
+		unsigned int dataType;
     // texture configuration
     unsigned int wrapS; // wrapping mode on S axis
     unsigned int wrapT; // wrapping mode on T axis
@@ -22,6 +23,7 @@ public:
     // constructor (sets default texture modes)
     Texture2D();
 		Texture2D(unsigned int internalFormat);
+		Texture2D(unsigned int internalFormat, unsigned int dataType);
     // generates texture from image data
     void generate(unsigned int width, unsigned int height, unsigned char* data);
     // binds the texture as the current active GL_TEXTURE_2D texture object

@@ -2,7 +2,7 @@
 #include <iostream>
 
 Texture2D::Texture2D()
-    : width(0), height(0), internalFormat(GL_RGB), imageFormat(GL_RGB), wrapS(GL_REPEAT), wrapT(GL_REPEAT), filterMin(GL_LINEAR), filterMax(GL_LINEAR)
+    : width(0), height(0), internalFormat(GL_RGB), imageFormat(GL_RGB), wrapS(GL_REPEAT), wrapT(GL_REPEAT), filterMin(GL_LINEAR), filterMax(GL_LINEAR), dataType(GL_UNSIGNED_BYTE)
 {
     glGenTextures(1, &this->ID);
 }
@@ -12,6 +12,12 @@ Texture2D::Texture2D(unsigned int internalFormat)
 {
 	this->internalFormat = internalFormat;
 	this->imageFormat = internalFormat;
+}
+
+Texture2D::Texture2D(unsigned int internalFormat, unsigned int dataType)
+	: Texture2D(internalFormat)
+{
+	this->dataType = dataType;
 }
 
 void Texture2D::generate(unsigned int width, unsigned int height, unsigned char* data)
