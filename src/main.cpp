@@ -93,7 +93,6 @@ int main()
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		Model angel((objDir + "/statue/angel.obj"));
 		Model cube((objDir + "/cube/cube.obj"));
-		SSSMaterial SSSMat(0.5, 0.5, 2.0, 0.5);
     std::cout << "Loaded Models\n"; 
     unsigned int frameQuad = makeQuad();
 
@@ -138,8 +137,14 @@ int main()
 		// --------------------
 	
 		// compute dipole approx table
+		float mScattering = 0.8;
+		float mAbsorption = 0.2;
+		float mRri = 2.5;
+		float mMeanCosine = 0.7;
+		SSSMaterial SSSMat(mScattering, mAbsorption, mRri, mMeanCosine);
 		std::vector<float> dipole_lookup = getDipoleDistribution(SSSMat);
-		std::cout << "dipole lookup: ";
+		int maxDistance = dipole_lookup.size();
+		std::cout << "dipole lookup (length " << dipole_lookup.size() << "): ";
 		for (float i : dipole_lookup)
 		{
 			std::cout << i << ",";
@@ -356,7 +361,7 @@ std::vector<float> getDipoleDistribution(SSSMaterial& material)
 
 	do {
 		distribution.push_back(dipoleDistribution(++r, pAlpha, sigma_tr, z_r, z_v));
-	} while (distribution.back() > 0.000001);
+	} while (distribution.back() > 0.01);
 
 	return distribution;
 }
