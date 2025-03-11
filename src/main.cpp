@@ -21,7 +21,7 @@ void processInput(GLFWwindow *window);
 unsigned int makeQuad();
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
 void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader, bool depthPass = false);
-void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader);
+void drawQuad(unsigned int quadVAO, unsigned int textureID, Shader &shader);
 GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
 void setShaderUniforms(Shader &shader);
 void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels);
@@ -129,28 +129,33 @@ int main()
 
     // framebuffer (Post-Processing)
     // -----------------------------
-		Framebuffer shadowMap(SHADOW_WIDTH, SHADOW_HEIGHT, GL_DEPTH_COMPONENT);
-    msFramebuffer msBuffer(SCR_WIDTH, SCR_HEIGHT, 4, GL_RGBA16F);
     Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
+		screenBuffer.generate(GL_RGB);
+		screenBuffer.use();
 
 		// image space SSS calc
 		// --------------------
 	
 		// compute dipole approx table
-		float mScattering = 0.8;
+		float mScattering = 10.0;
 		float mAbsorption = 0.2;
 		float mRri = 2.5;
-		float mMeanCosine = 0.7;
+		float mMeanCosine = 0.0;
 		SSSMaterial SSSMat(mScattering, mAbsorption, mRri, mMeanCosine);
 		std::vector<float> dipole_lookup = getDipoleDistribution(SSSMat);
-		int maxDistance = dipole_lookup.size();
+		// dipole[i] = R_d(i / 10)	
+		float maxDistance = dipole_lookup.size() / 10.0f;
+		// store in 1D texture
+		
+		/*
 		std::cout << "dipole lookup (length " << dipole_lookup.size() << "): ";
 		for (float i : dipole_lookup)
 		{
 			std::cout << i << ",";
 		}
 		std::cout <<"\n";
-    
+    */
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -166,7 +171,7 @@ int main()
         lastFrame = currentFrame;
 				float time = glfwGetTime();
 
-				// 1. render from light (shadowMap, splatMap)
+				// 1. render from light (splatmap)
 				// ------------------------------------------
 
 
@@ -181,8 +186,11 @@ int main()
 				//    4. apply scatter texture to object positions
 
 				glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				screenBuffer.use();
 				drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				drawQuad(frameQuad, screenBuffer.colourBuffers[0], frameShader);
 
 
         // -------------------------------------------------------------------------------
@@ -273,12 +281,12 @@ void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Li
     glUseProgram(0);
 }
 
-void drawQuad(unsigned int quadVAO, Framebuffer &buffer, Shader &shader)
+void drawQuad(unsigned int quadVAO, unsigned int textureID, Shader &shader)
 {
         shader.use();
 				glActiveTexture(GL_TEXTURE0);
 				shader.setInt("frameTexture", 0);
-				buffer.colourBuffer.bind();
+				glBindTexture(GL_TEXTURE_2D, textureID);
         glBindVertexArray(quadVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
@@ -319,8 +327,10 @@ void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &lig
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 }
 
-float dipoleDistribution(int r, float pAlpha, float sigma_tr, float z_r, float z_v)
+float dipoleDistribution(float r, float pAlpha, float sigma_tr, float z_r, float z_v)
 {
+		r /= 10;
+		
 		float d_r = sqrt(pow(r, 2) + pow(z_r, 2));
 		float d_v = sqrt(pow(r, 2) + pow(z_v, 2));
 		
@@ -342,26 +352,26 @@ std::vector<float> getDipoleDistribution(SSSMaterial& material)
 		// 3. generate distribution texture from this value
 		
 		// reduced coeffs
-		float pScatter = (1 - material.meanCosine) * material.scattering;
+		float pScatter = (1 - material.meanCosine) * material.scattering; 
 		float pExtinction = material.absorption + pScatter;
-		float pAlpha = pScatter / pExtinction;
+		float pAlpha = pScatter / pExtinction; // proportion of extinction that is scatter
 		float sigma_tr = sqrt(3 * material.absorption * pExtinction);
 
 		// Fresnel and A (?)
-		float F_dr = (-1.440 / pow(material.rri, 2)) + (0.710 / material.rri) + 0.0668 + (0.636 * material.rri);
+		float F_dr = (-1.440 / pow(material.rri, 2)) + (0.710 / material.rri) + 0.0668 + (0.0636 * material.rri);
 		// may cause divide by 0?
 		float A = (1 + F_dr) / (1 - F_dr);	
 
 		// dipole distances
 		float z_r = 1 / pExtinction;
-		float z_v = z_r * (1 + (4 * A) / 3);
+		float z_v = z_r * (1 + ((4 * A) / 3));
 
 		int r = 0;
 		std::vector<float> distribution;
 
 	do {
 		distribution.push_back(dipoleDistribution(++r, pAlpha, sigma_tr, z_r, z_v));
-	} while (distribution.back() > 0.01);
+	} while (distribution.back() > 0.001);
 
 	return distribution;
 }

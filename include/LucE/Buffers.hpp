@@ -4,7 +4,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Texture.hpp"
-#include "Shader.hpp"
+#include <iostream>
+#include <vector>
 
 class UniformMat4Buf
 {
@@ -27,12 +28,25 @@ class Framebuffer
 {
     public:
         unsigned int ID;
-        Texture2D colourBuffer;
+				unsigned int width;
+				unsigned int height;
+				std::vector<unsigned int> colourBuffers;
 
-        Framebuffer(unsigned int width, unsigned int height, GLenum internal_format = GL_RGB);
+        Framebuffer(unsigned int width, unsigned int height);
         void use(){
             glBindFramebuffer(GL_FRAMEBUFFER, ID);
+						if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+						{
+							std::cout << "ERROR:FRAMEBUFFER::NOT_COMPLETE" << std::endl;
+							glBindFramebuffer(GL_FRAMEBUFFER, 0);
+						}
         }
+				void attachBuffer(unsigned int buffID, unsigned int attachmentType, unsigned int number = 0);
+				/*
+				 * generate FBO with a single colour buffer with associated internal format
+				 * and depth stencil attachment
+				*/
+				void generate(unsigned int internal_format);
 };
 
 class msFramebuffer
@@ -44,7 +58,20 @@ class msFramebuffer
         msFramebuffer(unsigned int width, unsigned int height, unsigned int samples, GLenum internal_format = GL_RGB);
         void use(){
             glBindFramebuffer(GL_FRAMEBUFFER, ID);
+						if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+						{
+							std::cout << "ERROR:FRAMEBUFFER::NOT_COMPLETE" << std::endl;
+							glBindFramebuffer(GL_FRAMEBUFFER, 0);
+						}
         }
 };
 
+class RenderBufferStorage
+{
+public: 
+	unsigned int ID;
+	bool multisampled;
+
+	RenderBufferStorage(unsigned int width, unsigned int height, bool multisampled = false, unsigned int samples = 0);
+};
 #endif

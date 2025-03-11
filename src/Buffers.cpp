@@ -31,36 +31,57 @@ void UniformMat4Buf::fillIdx(const unsigned int idx, const glm::mat4 &mat)
 
 // frame buffer
 // ------------
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLenum internal_format /* default GL_RGB */)
+Framebuffer::Framebuffer(unsigned int width, unsigned int height)
+	: width(width), height(height)
 {
     // create buffer
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
-    // bind color attachment
-		colourBuffer = Texture2D(internal_format);
-		colourBuffer.generate(width, height, NULL);
-
-		if (internal_format == GL_DEPTH_COMPONENT)
-		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, colourBuffer.ID, 0);
-			glDrawBuffer(GL_NONE);
-			glReadBuffer(GL_NONE);
-		}
-	
-		else 
-		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBuffer.ID, 0);
-			// create renderbuffer object for depth/stencil
-		
-			unsigned int rbo;
-			glGenRenderbuffers(1, &rbo);
-			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-					std::cout << "ERROR::FRAMEBUFFER::NOT_COMPLETE" << std::endl;
-		}
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::generate(unsigned int internal_format)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, ID);
+	Texture2D colourAttachment(internal_format);
+	colourAttachment.generate(width, height, NULL);
+	if (internal_format == GL_DEPTH_COMPONENT)
+	{
+		attachBuffer(colourAttachment.ID, GL_DEPTH_COMPONENT);
+	}
+	else 
+	{
+		attachBuffer(colourAttachment.ID, GL_TEXTURE_2D);
+	}
+
+	RenderBufferStorage rbo(width, height);
+	attachBuffer(rbo.ID, GL_RENDERBUFFER);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::attachBuffer(unsigned int buffID, unsigned int attachmentType, unsigned int number /* default 0 */)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, ID);
+	switch (attachmentType)
+	{
+		case GL_TEXTURE_2D:
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + number, GL_TEXTURE_2D, buffID, 0);	
+			colourBuffers.push_back(buffID);
+			break;
+		case GL_RENDERBUFFER:
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffID);	
+			break;
+		case GL_DEPTH_COMPONENT:
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buffID, 0);
+			colourBuffers.push_back(buffID);
+			break;	
+		default:
+			std::cout << "ERROR::NOT A VALID BUFFER ATTACHMENT TYPE\n";
+			break;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 // multisampled frame buffer
@@ -87,4 +108,19 @@ msFramebuffer::msFramebuffer(unsigned int width, unsigned int height, unsigned i
         std::cout << "ERROR::FRAMEBUFFER::NOT_COMPLETE" << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+RenderBufferStorage::RenderBufferStorage(unsigned int width, unsigned int height, bool multisampled, unsigned int samples)
+	: multisampled(multisampled)
+{
+	glGenRenderbuffers(1, &ID);
+	glBindRenderbuffer(GL_RENDERBUFFER, ID);
+	if (multisampled)
+	{
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
+	}
+	else
+	{
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);	
+	}
 }
