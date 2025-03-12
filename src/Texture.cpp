@@ -26,7 +26,7 @@ void Texture2D::generate(unsigned int width, unsigned int height, unsigned char*
     this->height = height;
     // create Texture
     glBindTexture(GL_TEXTURE_2D, this->ID);
-    glTexImage2D(GL_TEXTURE_2D, 0, this->internalFormat, width, height, 0, this->internalFormat, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, this->internalFormat, width, height, 0, this->internalFormat, dataType, data);
     // set Texture wrap and filter modes
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapT);

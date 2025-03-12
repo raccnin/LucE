@@ -130,8 +130,17 @@ int main()
     // framebuffer (Post-Processing)
     // -----------------------------
     Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
-		screenBuffer.generate(GL_RGB);
-		screenBuffer.use();
+		Texture2D sceneData(GL_RGB);
+		Texture2D sceneRed(GL_RGB);
+		RenderBufferStorage sceneRBO(SCR_WIDTH, SCR_HEIGHT);
+		sceneData.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
+		sceneRed.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
+		screenBuffer.attachBuffer(sceneData.ID, GL_TEXTURE_2D);
+		screenBuffer.attachBuffer(sceneRed.ID, GL_TEXTURE_2D, 1);
+		screenBuffer.attachBuffer(sceneRBO.ID, GL_RENDERBUFFER);
+
+		unsigned int attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+
 
 		// image space SSS calc
 		// --------------------
@@ -172,7 +181,8 @@ int main()
 				float time = glfwGetTime();
 
 				// 1. render from light (splatmap)
-				// ------------------------------------------
+				// world positions and normals (single scatter) 
+				// --------------------------------------------
 
 
 				// 2. render from camera for world positions
@@ -187,10 +197,11 @@ int main()
 
 				glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 				screenBuffer.use();
+				// TODO: make this inbuilt to buffer class
 				drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				drawQuad(frameQuad, screenBuffer.colourBuffers[0], frameShader);
+				drawQuad(frameQuad, screenBuffer.getAttachment(GL_COLOR_ATTACHMENT1), frameShader);
 
 
         // -------------------------------------------------------------------------------

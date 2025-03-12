@@ -4,7 +4,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <glad.h>
-#include <vector>
+#include <map>
 #include <iostream>
 
 UniformMat4Buf::UniformMat4Buf(const std::string &name, const glm::mat4 data[], const unsigned int dataSize, const unsigned int bindIdx)
@@ -67,14 +67,16 @@ void Framebuffer::attachBuffer(unsigned int buffID, unsigned int attachmentType,
 	{
 		case GL_TEXTURE_2D:
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + number, GL_TEXTURE_2D, buffID, 0);	
-			colourBuffers.push_back(buffID);
+			colorAttachments[GL_COLOR_ATTACHMENT0 + number] = buffID;
+			activeAttachments.push_back(GL_COLOR_ATTACHMENT0 + number);
 			break;
 		case GL_RENDERBUFFER:
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffID);	
 			break;
 		case GL_DEPTH_COMPONENT:
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buffID, 0);
-			colourBuffers.push_back(buffID);
+			colorAttachments[GL_COLOR_ATTACHMENT0 + number] = buffID;
+			activeAttachments.push_back(GL_COLOR_ATTACHMENT0 + number);
 			break;	
 		default:
 			std::cout << "ERROR::NOT A VALID BUFFER ATTACHMENT TYPE\n";

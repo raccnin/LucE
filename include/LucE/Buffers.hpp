@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "Texture.hpp"
 #include <iostream>
+#include <map>
 #include <vector>
 
 class UniformMat4Buf
@@ -26,27 +27,36 @@ enum TransformIdx
 
 class Framebuffer
 {
-    public:
-        unsigned int ID;
-				unsigned int width;
-				unsigned int height;
-				std::vector<unsigned int> colourBuffers;
+public:
+	unsigned int ID;
+	unsigned int width;
+	unsigned int height;
+	std::map<unsigned int, unsigned int> colorAttachments;
 
-        Framebuffer(unsigned int width, unsigned int height);
-        void use(){
-            glBindFramebuffer(GL_FRAMEBUFFER, ID);
-						if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-						{
-							std::cout << "ERROR:FRAMEBUFFER::NOT_COMPLETE" << std::endl;
-							glBindFramebuffer(GL_FRAMEBUFFER, 0);
-						}
-        }
-				void attachBuffer(unsigned int buffID, unsigned int attachmentType, unsigned int number = 0);
-				/*
+	Framebuffer(unsigned int width, unsigned int height);
+	void use(){
+		glBindFramebuffer(GL_FRAMEBUFFER, ID);
+		glDrawBuffers(activeAttachments.size(), &activeAttachments[0]);
+		if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		{
+			std::cout << "ERROR:FRAMEBUFFER::NOT_COMPLETE" << std::endl;
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+	}
+	void attachBuffer(unsigned int buffID, unsigned int attachmentType, unsigned int number = 0);
+	/*
 				 * generate FBO with a single colour buffer with associated internal format
 				 * and depth stencil attachment
 				*/
-				void generate(unsigned int internal_format);
+	void generate(unsigned int internal_format);
+	unsigned int getAttachment(unsigned int colorAttachment)
+	{
+		return colorAttachments[colorAttachment];
+	}
+private:
+	// duplicate information
+	// TODO: get list of keys of colorAttachments instead
+	std::vector<unsigned int> activeAttachments;
 };
 
 class msFramebuffer
