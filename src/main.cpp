@@ -271,6 +271,7 @@ int main()
 				glBindTexture(GL_TEXTURE_2D, scatterBuffer.getAttachment(GL_COLOR_ATTACHMENT0));
 				scatterShader.setInt("scatterTexture", 0);
 				scatterShader.setVec2("windowSize", glm::vec2(SCR_WIDTH, SCR_HEIGHT));
+				SSSMat.setUniforms(scatterShader);
 				cube.draw(scatterShader);
 
         glfwSwapBuffers(window);
