@@ -83,6 +83,7 @@ int main()
 		Shader lightShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/light_frag.fs").c_str());
 		Shader gBufShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/gBufMap.fs").c_str());
 		Shader splatShader = Shader((shaderDir+"/splatGen.vs").c_str(), (shaderDir+"/splatGen.fs").c_str());
+		Shader scatterShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/draw_scatter.fs").c_str());
 
     // object config
     // -------------
@@ -155,8 +156,8 @@ int main()
 		RenderBufferStorage gRBO(SCR_WIDTH, SCR_HEIGHT);
 		gBuffer.attachBuffer(gRBO.ID, GL_RENDERBUFFER);
 
-		Framebuffer splatterBuffer(SCR_WIDTH, SCR_HEIGHT);
-		splatterBuffer.generate(GL_RGBA);
+		Framebuffer scatterBuffer(SCR_WIDTH, SCR_HEIGHT);
+		scatterBuffer.generate(GL_RGBA);
 
 		// image space SSS calc
 		// --------------------
@@ -166,7 +167,8 @@ int main()
 		float mAbsorption = 0.5;
 		float mRri = 2.5;
 		float mMeanCosine = 0.0;
-		SSSMaterial SSSMat(mScattering, mAbsorption, mRri, mMeanCosine);
+		glm::vec3 mAlbedo(0.0, 0.8, 0.3);
+		SSSMaterial SSSMat(mAlbedo, mScattering, mAbsorption, mRri, mMeanCosine);
 		std::vector<float> dipole_lookup = getDipoleDistribution(SSSMat);
 		// dipole[i] = R_d(i / 10)	
 		float maxDistance = dipole_lookup.size() / 10.0f;
@@ -198,7 +200,6 @@ int main()
 				//camera.setPos(glm::vec3(3.0  + 2 * cos(time), camera.worldPos.y, camera.worldPos.z));
 
 				glEnable(GL_DEPTH_TEST);
-				glDisable(GL_BLEND);
 				glClearColor(0.0, 0.0, 0.0, 1.0);
 				// 1. render from light (splatmap)
 				// world positions and normals (single scatter) 
@@ -226,7 +227,7 @@ int main()
 				//    3. alpha blend contribution of each point to scatter texture
 				//    4. apply scatter texture to object positions
 
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				scatterBuffer.use();
 				glEnable(GL_BLEND);
 
 				// additive alpha blending
@@ -238,7 +239,7 @@ int main()
 				
 				if (camera.worldPos != lastCamPos)
 				{
-					orientQuad(camera, quadVBO, maxDistance);
+					orientQuad(camera, quadVBO, 0.5);
 				}
 				lastCamPos = camera.worldPos;
 				
@@ -254,9 +255,23 @@ int main()
 				splatShader.setInt("splatNormals", 1);
 				splatShader.setInt("viewPositions", 2);
 				splatShader.setInt("splatResolution", SPLAT_RES);	
+				splatShader.setInt("maxDistance", dipole_lookup.size());
+
+				SSSMat.setUniforms(splatShader);
+				light.setUniforms(splatShader);
 
 				glBindVertexArray(quadVAO);
 				glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, SPLAT_RES*SPLAT_RES);
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				scatterShader.use();
+				
+				glDisable(GL_BLEND);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, scatterBuffer.getAttachment(GL_COLOR_ATTACHMENT0));
+				scatterShader.setInt("scatterTexture", 0);
+				scatterShader.setVec2("windowSize", glm::vec2(SCR_WIDTH, SCR_HEIGHT));
+				cube.draw(scatterShader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

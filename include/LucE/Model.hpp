@@ -19,22 +19,24 @@ struct Material
 class SSSMaterial
 {
 public:
+	glm::vec3 albedo;	
+
 	float scattering;
 	float absorption;
-	float extinction;
 	float meanCosine;
 	float rri;
 
-	SSSMaterial(float scattering, float absorption, float rri, float meanCosine)
-	: scattering(scattering), absorption(absorption), extinction(scattering + absorption), meanCosine(meanCosine), rri(rri) 
+	SSSMaterial(glm::vec3 albedo, float scattering, float absorption, float rri, float meanCosine)
+	: scattering(scattering), absorption(absorption),  meanCosine(meanCosine), rri(rri), albedo(albedo)
 	{
 	}
 
 	void setUniforms(Shader& shader)
 	{
+		shader.setVec3("material.albedo", albedo);
+
 		shader.setFloat("material.scattering", scattering);
 		shader.setFloat("material.absorption", absorption);
-		shader.setFloat("material.extinction", extinction);
 		shader.setFloat("material.meanCosine", meanCosine);
 		shader.setFloat("material.rri", rri);
 	}

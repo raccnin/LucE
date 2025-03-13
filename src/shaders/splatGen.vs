@@ -16,12 +16,16 @@ layout (std140) uniform Matrices
 
 out VS_OUT {
 	vec3 FragPos;
+	vec3 splatCenter;
 } vs_out;
 
 void main()
 {
 	vec2 splatIndex = vec2(gl_InstanceID % splatResolution, int(gl_InstanceID / splatResolution));
 	vec3 worldPosition = texture2D(splatPositions, splatIndex / splatResolution).rgb;
+
+	vs_out.splatCenter = worldPosition;
+	vs_out.FragPos = aPos + worldPosition;
 	gl_Position = projection * view * vec4(aPos + worldPosition, 1.0);
 }
 
