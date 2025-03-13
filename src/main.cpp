@@ -18,7 +18,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-unsigned int makeQuad();
+void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO);
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
 void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader, bool depthPass = false);
 void drawQuad(unsigned int quadVAO, unsigned int textureID, Shader &shader);
@@ -26,12 +26,14 @@ GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_he
 void setShaderUniforms(Shader &shader);
 void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels);
 std::vector<float> getDipoleDistribution(SSSMaterial& material);
+void orientQuad(Camera& camera, unsigned int quadVBO, float size);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
+const unsigned int SPLAT_RES = 32;
 
 const float PI = 3.141;
 const float E = 2.718;
@@ -41,7 +43,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(-4.0f, 3.0f, 4.0f));
+Camera camera(glm::vec3(-5.0f, 3.0f, 5.0f));
 
 
 int main()
@@ -74,12 +76,13 @@ int main()
 
     // compile shader programs
     // -----------------------
+		// TODO: must change this resource manager it's so bad good lord
     std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_sss.fs").c_str());
-		Shader depthShader = Shader((shaderDir+"/depthPass.vs").c_str(), (shaderDir+"/depthPass.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
-    Shader depthVisualiser = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/visualise_depth.fs").c_str());
 		Shader lightShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/light_frag.fs").c_str());
+		Shader gBufShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/gBufMap.fs").c_str());
+		Shader splatShader = Shader((shaderDir+"/splatGen.vs").c_str(), (shaderDir+"/splatGen.fs").c_str());
 
     // object config
     // -------------
@@ -91,17 +94,20 @@ int main()
     Model angel((objDir + "/statue/angel.obj"), cubeMat);
     */
     //Model backpack((objDir + "/backpack/backpack.obj"));
-		Model angel((objDir + "/statue/angel.obj"));
+		//Model angel((objDir + "/statue/angel.obj"));
 		Model cube((objDir + "/cube/cube.obj"));
     std::cout << "Loaded Models\n"; 
-    unsigned int frameQuad = makeQuad();
+		unsigned int quadVAO, quadVBO;
+		makeQuad(quadVAO, quadVBO);
+		
+
 
     Model* scene[] = {&cube};
 
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(0.0f, 0.5f, 0.0f);
+		glm::vec3 lightPos = glm::vec3(1.5f, 1.5f, 1.8f);
 		glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
 		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
 		float spotlightInnerCutoff = cos(glm::radians(20.0f));
@@ -112,7 +118,6 @@ int main()
 
     // shader config
     // -------------
-
     camera.lookAt(0.0f, 0.0f, 0.0f);
     glm::mat4 view = camera.getViewMatrix();
 
@@ -127,49 +132,58 @@ int main()
     frameShader.use();
     frameShader.setInt("frameTexture", 0);
 
-    // framebuffer (Post-Processing)
+    // framebuffers (Post-Processing)
     // -----------------------------
-    Framebuffer screenBuffer(SCR_WIDTH, SCR_HEIGHT);
-		Texture2D sceneData(GL_RGB);
-		Texture2D sceneRed(GL_RGB);
-		RenderBufferStorage sceneRBO(SCR_WIDTH, SCR_HEIGHT);
-		sceneData.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
-		sceneRed.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
-		screenBuffer.attachBuffer(sceneData.ID, GL_TEXTURE_2D);
-		screenBuffer.attachBuffer(sceneRed.ID, GL_TEXTURE_2D, 1);
-		screenBuffer.attachBuffer(sceneRBO.ID, GL_RENDERBUFFER);
+		Framebuffer splatBuffer(SPLAT_RES, SPLAT_RES);
+		Texture2D splatPositions(GL_RGBA16F, GL_FLOAT);
+		Texture2D splatNormals(GL_RGBA16F, GL_FLOAT);
+		Texture2D* splatAttachments[] = {&splatPositions, &splatNormals};
+		char* description;
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			splatAttachments[i]->setFilters(GL_NEAREST, GL_NEAREST);
+			splatAttachments[i]->generate(SPLAT_RES, SPLAT_RES, NULL);
+			splatBuffer.attachBuffer(splatAttachments[i]->ID, GL_TEXTURE_2D, i);
+		}
+		RenderBufferStorage splatRBO(SPLAT_RES, SPLAT_RES);
+		splatBuffer.attachBuffer(splatRBO.ID, GL_RENDERBUFFER);
 
-		unsigned int attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+		Framebuffer gBuffer(SCR_WIDTH, SCR_HEIGHT);
+		Texture2D gWorldPositions(GL_RGBA16F, GL_FLOAT);
+		gWorldPositions.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
+		gBuffer.attachBuffer(gWorldPositions.ID, GL_TEXTURE_2D);
+		RenderBufferStorage gRBO(SCR_WIDTH, SCR_HEIGHT);
+		gBuffer.attachBuffer(gRBO.ID, GL_RENDERBUFFER);
 
+		Framebuffer splatterBuffer(SCR_WIDTH, SCR_HEIGHT);
+		splatterBuffer.generate(GL_RGBA);
 
 		// image space SSS calc
 		// --------------------
 	
 		// compute dipole approx table
-		float mScattering = 10.0;
-		float mAbsorption = 0.2;
+		float mScattering = 0.5;
+		float mAbsorption = 0.5;
 		float mRri = 2.5;
 		float mMeanCosine = 0.0;
 		SSSMaterial SSSMat(mScattering, mAbsorption, mRri, mMeanCosine);
 		std::vector<float> dipole_lookup = getDipoleDistribution(SSSMat);
 		// dipole[i] = R_d(i / 10)	
 		float maxDistance = dipole_lookup.size() / 10.0f;
+		std::cout << "maxDistance: " << maxDistance << std::endl;
 		// store in 1D texture
 		
-		/*
 		std::cout << "dipole lookup (length " << dipole_lookup.size() << "): ";
 		for (float i : dipole_lookup)
 		{
 			std::cout << i << ",";
 		}
 		std::cout <<"\n";
-    */
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        glEnable(GL_DEPTH_TEST);
         // input
         // -----
         processInput(window);
@@ -178,33 +192,72 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+				glm::vec3 lastCamPos;
 				float time = glfwGetTime();
+				//light.setPos(glm::vec3(4.5 * cos(time), light.position.y, 4.5 * sin(time)));
+				//camera.setPos(glm::vec3(3.0  + 2 * cos(time), camera.worldPos.y, camera.worldPos.z));
 
+				glEnable(GL_DEPTH_TEST);
+				glDisable(GL_BLEND);
+				glClearColor(0.0, 0.0, 0.0, 1.0);
 				// 1. render from light (splatmap)
 				// world positions and normals (single scatter) 
+				// rbo also holds shadowmap information
 				// --------------------------------------------
-
+				splatBuffer.use();
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glViewport(0, 0, SPLAT_RES, SPLAT_RES);
+				Matrices.fillIdx(VIEW, light.getViewMatrix());
+				drawScene(scene, sizeof(scene) / sizeof(*scene), light, gBufShader);
 
 				// 2. render from camera for world positions
 				// -----------------------------------------
-		
+				gBuffer.use();
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+				Matrices.fillIdx(VIEW, camera.getViewMatrix());
+				drawScene(scene, sizeof(scene) / sizeof(*scene), light, gBufShader);
 
 				// 3. distribute SSS contribution on model
 				//    1. render splats
+				//     render nSplat quads, using render ID to index splat positions
 				//    2. calculate single and multiple scattering at each splat point
+				//			using, dipole lookup, world positions, and normals
 				//    3. alpha blend contribution of each point to scatter texture
 				//    4. apply scatter texture to object positions
 
-				glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-				screenBuffer.use();
-				// TODO: make this inbuilt to buffer class
-				drawScene(scene, sizeof(scene) / sizeof(*scene), light, shader);
-
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				drawQuad(frameQuad, screenBuffer.getAttachment(GL_COLOR_ATTACHMENT1), frameShader);
+				glEnable(GL_BLEND);
 
+				// additive alpha blending
+				glBlendFunc(GL_ONE, GL_ONE);
+				glDisable(GL_DEPTH_TEST);
+				glClear(GL_COLOR_BUFFER_BIT);
 
-        // -------------------------------------------------------------------------------
+				// orient quad to be perependicular to camera
+				
+				if (camera.worldPos != lastCamPos)
+				{
+					orientQuad(camera, quadVBO, maxDistance);
+				}
+				lastCamPos = camera.worldPos;
+				
+				splatShader.use();
+				glActiveTexture(GL_TEXTURE0);
+				splatPositions.bind();
+				glActiveTexture(GL_TEXTURE1);
+				splatNormals.bind();
+				glActiveTexture(GL_TEXTURE2);
+				gWorldPositions.bind();
+
+				splatShader.setInt("splatPositions", 0);	
+				splatShader.setInt("splatNormals", 1);
+				splatShader.setInt("viewPositions", 2);
+				splatShader.setInt("splatResolution", SPLAT_RES);	
+
+				glBindVertexArray(quadVAO);
+				glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, SPLAT_RES*SPLAT_RES);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -232,27 +285,27 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-unsigned int makeQuad()
+void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO)
 {
     const float quadVertices[]
     {   // position  // texcoord
-        -1.0f, 1.0f, 0.0f, 1.0f, // top left
-        -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
-        1.0f, -1.0f, 1.0f, 0.0f, // bottom right
-        1.0f, 1.0f, 1.0f, 1.0f // top right
+        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top left
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f // top right
     };
     const unsigned int quadIndices[]
     {
         0, 1, 2, 2, 3, 0
     };
 
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    unsigned int EBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
     glGenBuffers(1, &EBO);
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
@@ -261,14 +314,12 @@ unsigned int makeQuad()
     // ----------------
     // position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*) 0);
     // texCoord
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*) (sizeof(float) * 2));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*) (sizeof(float) * 3));
 
     glBindVertexArray(0);
-
-    return VAO;
 }
 
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf)
@@ -336,6 +387,26 @@ void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &lig
 	// reset
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+}
+
+void orientQuad(Camera& camera, unsigned int quadVBO, float size)
+{
+	float halfDistance = size/2;
+	glm::vec3 topRight = halfDistance * glm::normalize(camera.up + camera.right);		
+	glm::vec3 topLeft =  halfDistance * glm::normalize(camera.up + -camera.right);
+	glm::vec3 bottomRight =  halfDistance * glm::normalize(-camera.up + camera.right);
+	glm::vec3 bottomLeft = halfDistance *  glm::normalize(-camera.up + -camera.right);
+
+	float quadVertices[]
+		{   // position  // texcoord
+			topLeft.x, topLeft.y, topLeft.z, 0.0f, 1.0f, // top left
+			bottomLeft.x, bottomLeft.y, bottomLeft.z, 0.0f, 0.0f, // bottom left
+			bottomRight.x, bottomRight.y, bottomRight.z, 1.0f, 0.0f, // bottom right
+			topRight.x, topRight.y, topRight.z, 1.0f, 1.0f // top right
+		};
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+
 }
 
 float dipoleDistribution(float r, float pAlpha, float sigma_tr, float z_r, float z_v)

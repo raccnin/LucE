@@ -34,15 +34,7 @@ public:
 	std::map<unsigned int, unsigned int> colorAttachments;
 
 	Framebuffer(unsigned int width, unsigned int height);
-	void use(){
-		glBindFramebuffer(GL_FRAMEBUFFER, ID);
-		glDrawBuffers(activeAttachments.size(), &activeAttachments[0]);
-		if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		{
-			std::cout << "ERROR:FRAMEBUFFER::NOT_COMPLETE" << std::endl;
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-	}
+	void use();
 	void attachBuffer(unsigned int buffID, unsigned int attachmentType, unsigned int number = 0);
 	/*
 				 * generate FBO with a single colour buffer with associated internal format

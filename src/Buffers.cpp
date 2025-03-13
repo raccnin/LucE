@@ -40,6 +40,44 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void Framebuffer::use(){
+	glBindFramebuffer(GL_FRAMEBUFFER, ID);
+	glDrawBuffers(activeAttachments.size(), &activeAttachments[0]);
+	unsigned int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::string err = "ERROR::FRAMEBUFFER" + std::to_string(ID) + "::";
+		switch (status)
+		{
+			case GL_FRAMEBUFFER_UNDEFINED:
+				err += "UNDEFINED";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+				err += "INCOMPLETE_ATTACHMENT";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+				err += "INCOMPLETE_MISSING_ATTACHMENT";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+				err += "INCOMPLETE_DRAW_BUFFER";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+				err += "INCOMPLETE_READ_BUFFER";
+				break;
+			case GL_FRAMEBUFFER_UNSUPPORTED:
+				err += "UNSUPPORTED";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+				err += "INCOMPLETE_LAYER_TARGETS";
+				break;
+			default:
+				std::cout << "OTHER";
+				break;
+		}
+		std::cout << err << std::endl;
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+}
 void Framebuffer::generate(unsigned int internal_format)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
@@ -50,7 +88,7 @@ void Framebuffer::generate(unsigned int internal_format)
 		attachBuffer(colourAttachment.ID, GL_DEPTH_COMPONENT);
 	}
 	else 
-	{
+{
 		attachBuffer(colourAttachment.ID, GL_TEXTURE_2D);
 	}
 

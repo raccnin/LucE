@@ -35,28 +35,9 @@ in VS_OUT {
 		vec4 LightSpacePos;
 } fs_in;
 
-float calculateShadow(vec4 lightSpacePos, float bias)
-{
-	// perspective divide (/w)
-	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-	// to NDC [0,1]
-	projCoords = projCoords * 0.5 + 0.5;
-	
-	float closestDepth = texture(shadowMap, projCoords.xy).r;
-	float shadow = projCoords.z - bias > closestDepth ? 1.0 : 0.0;
-
-	return shadow;
-}
-
-float attenuate(vec3 toLight)
-{
-	float d = length(toLight);
-	return 1.0 / (1.0 + d * d); // cubic attenuation
-}
-
 void main()
 {
-	vec3 albedo = vec3(0.5);
+	vec3 albedo = vec3(0.2, 0.8, 0.3);
 	RedColor = vec4(albedo * vec3(1.0, 0.0, 0.0), 1.0);
 	FragColor = vec4(albedo, 1.0);
 }

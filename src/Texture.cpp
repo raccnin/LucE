@@ -11,7 +11,13 @@ Texture2D::Texture2D(unsigned int internalFormat)
 	: Texture2D()
 {
 	this->internalFormat = internalFormat;
-	this->imageFormat = internalFormat;
+	if (internalFormat == GL_RGBA16F)
+	{
+		this->imageFormat = GL_RGBA;
+	}
+	else {
+		this->imageFormat = internalFormat;
+	}
 }
 
 Texture2D::Texture2D(unsigned int internalFormat, unsigned int dataType)
@@ -26,7 +32,7 @@ void Texture2D::generate(unsigned int width, unsigned int height, unsigned char*
     this->height = height;
     // create Texture
     glBindTexture(GL_TEXTURE_2D, this->ID);
-    glTexImage2D(GL_TEXTURE_2D, 0, this->internalFormat, width, height, 0, this->internalFormat, dataType, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, this->internalFormat, width, height, 0, this->imageFormat, this->dataType, data);
     // set Texture wrap and filter modes
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapT);

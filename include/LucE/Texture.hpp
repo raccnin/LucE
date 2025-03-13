@@ -24,6 +24,12 @@ public:
     Texture2D();
 		Texture2D(unsigned int internalFormat);
 		Texture2D(unsigned int internalFormat, unsigned int dataType);
+
+		void setFilters(unsigned int min, unsigned int max)
+		{
+			this->filterMin = min;
+			this->filterMax = max;
+		}
     // generates texture from image data
     void generate(unsigned int width, unsigned int height, unsigned char* data);
     // binds the texture as the current active GL_TEXTURE_2D texture object
