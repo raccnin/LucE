@@ -109,7 +109,7 @@ void main()
 
 	float scatter = multiScatter(inPoint, inDirection, outPoint, outDirection) + singleScatter();
 	vec3 radiance = radiance(light, inPoint);
-	float dotProd = max(0, dot(normal, -inDirection));
+	float dotProd = max(0.0, dot(normal, -inDirection));
 	vec3 outColour = scatter * radiance * dotProd;
 	FragColor = vec4(outColour, 1.0);
 }
