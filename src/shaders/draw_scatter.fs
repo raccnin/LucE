@@ -43,6 +43,7 @@ void main()
 {
 	vec3 ambient = 0.01 * material.albedo;
 	vec3 scatterContribution = texture(scatterTexture, gl_FragCoord.xy / windowSize).rgb;	
+	scatterContribution *= material.albedo;
 
 
 	vec3 HDRColour = ambient + scatterContribution;

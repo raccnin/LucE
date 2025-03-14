@@ -18,7 +18,6 @@ layout (std140) uniform Matrices
 out VS_OUT {
 	flat bool inVoid;
 	vec3 FragPos;
-	vec3 Normal;
 	flat vec3 splatCenter;
 	flat vec3 splatNormal;
 } vs_out;
@@ -30,7 +29,7 @@ void main()
 	vec3 worldNormal = texture(splatNormals, splatIndex / splatResolution).rgb;
 
 	vs_out.splatCenter = worldPosition.xyz;
-	vs_out.splatNormal = worldNormal;
+	vs_out.splatNormal = normalize(worldNormal);
 
 	vs_out.FragPos = aPos + worldPosition.xyz;
 	// prevent n quads at 0,0,0 if in void

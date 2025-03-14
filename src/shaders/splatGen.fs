@@ -35,11 +35,12 @@ uniform Material material;
 uniform SpotLight light;
 
 const float PI = 3.141;
+// fresnelSchlick constant for dielectric surfaces
+const float F0 = 0.04; 
 
 in VS_OUT {
 	flat bool inVoid;
 	vec3 FragPos;
-	vec3 Normal;
 	flat vec3 splatCenter;
 	flat vec3 splatNormal;
 } fs_in;
@@ -58,12 +59,15 @@ vec3 radiance(SpotLight light, vec3 position)
 	return light.diffuse * attenuation;
 }
 
-float fresnelTransmittance(float rri, vec3 theta)
+float fresnelSchlick(float cosTheta, float F0)
 {
-	// normal incidence
-	// otherwise
+	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0); 
+}
 
-	return 0.5;
+float fresnelTransmittance(float cosTheta, float F0)
+{
+	// by PBR, refracted = 1 - reflected
+	return 1 - fresnelSchlick(cosTheta, F0);
 }
 
 float multiScatter(vec3 x_i, vec3 w_i, vec3 x_o, vec3 w_o)
@@ -79,7 +83,9 @@ float multiScatter(vec3 x_i, vec3 w_i, vec3 x_o, vec3 w_o)
 	{
 		int dipoleIndex = int(r * 10); 
 		float R_d = texture(dipoleLookup, vec2(dipoleIndex, 0) / maxDistance).r;
-		float result = fresnelTransmittance(material.rri, w_i) * R_d * fresnelTransmittance(material.rri, w_o);
+		float incidentTheta = max(0.0, dot(fs_in.splatNormal, x_i));
+		float outgoingTheta = max(0.0, dot(fs_in.splatNormal, x_o));
+		float result = fresnelTransmittance(incidentTheta, F0) * R_d * fresnelTransmittance(outgoingTheta, F0);
 		return (1/PI) * result;
 	}
 }
@@ -103,7 +109,7 @@ void main()
 
 	float scatter = multiScatter(inPoint, inDirection, outPoint, outDirection) + singleScatter();
 	vec3 radiance = radiance(light, inPoint);
-	float dotProd = dot(normal, -inDirection);
+	float dotProd = max(0, dot(normal, -inDirection));
 	vec3 outColour = scatter * radiance * dotProd;
 	FragColor = vec4(outColour, 1.0);
 }
