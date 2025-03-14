@@ -28,6 +28,8 @@ uniform sampler2D scatterTexture;
 uniform vec2 windowSize;
 uniform Material material;
 
+const float GAMMA = 2.2;
+
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -39,8 +41,14 @@ in VS_OUT {
 
 void main()
 {
-	vec3 ambient = 0.1 * material.albedo;
+	vec3 ambient = 0.01 * material.albedo;
 	vec3 scatterContribution = texture(scatterTexture, gl_FragCoord.xy / windowSize).rgb;	
 
-	FragColor = vec4(ambient + scatterContribution, 1.0);
+
+	vec3 HDRColour = ambient + scatterContribution;
+	// reinahrd tone mapping
+	vec3 outColour = HDRColour / (HDRColour + vec3(1.0)); 
+	// gamma correction
+	outColour = pow(outColour, vec3(1.0 / GAMMA));
+	FragColor = vec4(outColour, 1.0);
 }

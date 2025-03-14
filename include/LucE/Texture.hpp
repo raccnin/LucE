@@ -7,33 +7,39 @@
 class Texture2D
 {
 public:
-    // holds the ID of the texture object, used for all texture operations to reference to this particular texture
-    unsigned int ID;
-    // texture image dimensions
-    unsigned int width, height; // width and height of loaded image in pixels
-    // texture Format
-    unsigned int internalFormat; // format of texture object
-    unsigned int imageFormat; // format of loaded image
-		unsigned int dataType;
-    // texture configuration
-    unsigned int wrapS; // wrapping mode on S axis
-    unsigned int wrapT; // wrapping mode on T axis
-    unsigned int filterMin; // filtering mode if texture pixels < screen pixels
-    unsigned int filterMax; // filtering mode if texture pixels > screen pixels
-    // constructor (sets default texture modes)
-    Texture2D();
-		Texture2D(unsigned int internalFormat);
-		Texture2D(unsigned int internalFormat, unsigned int dataType);
+	// holds the ID of the texture object, used for all texture operations to reference to this particular texture
+	unsigned int ID;
+	// texture image dimensions
+	unsigned int width, height; // width and height of loaded image in pixels
+	// texture Format
+	unsigned int internalFormat; // format of texture object
+	unsigned int imageFormat; // format of loaded image
+	unsigned int dataType;
+	// texture configuration
+	unsigned int wrapS; // wrapping mode on S axis
+	unsigned int wrapT; // wrapping mode on T axis
+	unsigned int filterMin; // filtering mode if texture pixels < screen pixels
+	unsigned int filterMax; // filtering mode if texture pixels > screen pixels
+	// constructor (sets default texture modes)
+	Texture2D();
+	Texture2D(unsigned int internalFormat);
+	Texture2D(unsigned int internalFormat, unsigned int dataType);
 
-		void setFilters(unsigned int min, unsigned int max)
-		{
-			this->filterMin = min;
-			this->filterMax = max;
-		}
-    // generates texture from image data
-    void generate(unsigned int width, unsigned int height, unsigned char* data);
-    // binds the texture as the current active GL_TEXTURE_2D texture object
-    void bind() const;
+	void setFilters(unsigned int min, unsigned int max)
+	{
+		this->filterMin = min;
+		this->filterMax = max;
+	}
+
+	void setWrap(unsigned int wrapS, unsigned int wrapT)
+	{
+		this->wrapS = wrapS;
+		this->wrapT = wrapT;
+	}
+	// generates texture from image data
+	void generate(unsigned int width, unsigned int height, const void* data);
+	// binds the texture as the current active GL_TEXTURE_2D texture object
+	void bind() const;
 };
 
 #endif

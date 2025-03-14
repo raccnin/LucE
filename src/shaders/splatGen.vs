@@ -1,12 +1,13 @@
 #version 330
 
 layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
 
 uniform sampler2D splatPositions;
+uniform sampler2D splatNormals;
 uniform int splatResolution;
+
 uniform mat4 model;
-// vector perpendicular to view vector
-uniform vec3 viewUp;
 
 layout (std140) uniform Matrices
 {
@@ -15,17 +16,26 @@ layout (std140) uniform Matrices
 };
 
 out VS_OUT {
+	flat bool inVoid;
 	vec3 FragPos;
-	vec3 splatCenter;
+	vec3 Normal;
+	flat vec3 splatCenter;
+	flat vec3 splatNormal;
 } vs_out;
 
 void main()
 {
 	vec2 splatIndex = vec2(gl_InstanceID % splatResolution, int(gl_InstanceID / splatResolution));
-	vec3 worldPosition = texture2D(splatPositions, splatIndex / splatResolution).rgb;
+	vec4 worldPosition = texture(splatPositions, splatIndex / splatResolution);
+	vec3 worldNormal = texture(splatNormals, splatIndex / splatResolution).rgb;
 
-	vs_out.splatCenter = worldPosition;
-	vs_out.FragPos = aPos + worldPosition;
-	gl_Position = projection * view * vec4(aPos + worldPosition, 1.0);
+	vs_out.splatCenter = worldPosition.xyz;
+	vs_out.splatNormal = worldNormal;
+
+	vs_out.FragPos = aPos + worldPosition.xyz;
+	// prevent n quads at 0,0,0 if in void
+	vs_out.inVoid = worldPosition.w > 0.0 ? true : false;
+
+	gl_Position = projection * view * vec4(vs_out.FragPos, 1.0);
 }
 

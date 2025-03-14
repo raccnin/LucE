@@ -11,12 +11,19 @@ Texture2D::Texture2D(unsigned int internalFormat)
 	: Texture2D()
 {
 	this->internalFormat = internalFormat;
-	if (internalFormat == GL_RGBA16F)
+	switch (internalFormat)
 	{
-		this->imageFormat = GL_RGBA;
-	}
-	else {
-		this->imageFormat = internalFormat;
+		case GL_RGBA16F:
+		case GL_RGBA32F:
+			this->imageFormat = GL_RGBA;
+			break;
+		case GL_R16F:
+		case GL_R32F:
+			this->imageFormat = GL_RED;
+			break;
+		default:
+			this->imageFormat = internalFormat;
+			break;
 	}
 }
 
@@ -26,7 +33,7 @@ Texture2D::Texture2D(unsigned int internalFormat, unsigned int dataType)
 	this->dataType = dataType;
 }
 
-void Texture2D::generate(unsigned int width, unsigned int height, unsigned char* data)
+void Texture2D::generate(unsigned int width, unsigned int height, const void* data)
 {
     this->width = width;
     this->height = height;

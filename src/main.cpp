@@ -33,7 +33,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
-const unsigned int SPLAT_RES = 32;
+const unsigned int SPLAT_RES = 64;
 
 const float PI = 3.141;
 const float E = 2.718;
@@ -49,6 +49,7 @@ Camera camera(glm::vec3(-5.0f, 3.0f, 5.0f));
 int main()
 {
 		// invert y coordinates for GL to use properly
+		// aware of inverting UV's in assimp! 
     stbi_set_flip_vertically_on_load(true);
 
 		std::string title = "OpenGL";
@@ -84,6 +85,7 @@ int main()
 		Shader gBufShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/gBufMap.fs").c_str());
 		Shader splatShader = Shader((shaderDir+"/splatGen.vs").c_str(), (shaderDir+"/splatGen.fs").c_str());
 		Shader scatterShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/draw_scatter.fs").c_str());
+		Shader dipoleDebug = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/draw_dipole.fs").c_str());
 
     // object config
     // -------------
@@ -108,8 +110,8 @@ int main()
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(1.5f, 1.5f, 1.8f);
-		glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec3 lightPos = glm::vec3(1.5f, 0.5f, 1.8f);
+		glm::vec3 lightColour = glm::vec3(10.0f, 10.0f, 10.0f);
 		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
 		float spotlightInnerCutoff = cos(glm::radians(20.0f));
 		float spotlightOuterCutoff = cos(glm::radians(50.0f));
@@ -157,30 +159,37 @@ int main()
 		gBuffer.attachBuffer(gRBO.ID, GL_RENDERBUFFER);
 
 		Framebuffer scatterBuffer(SCR_WIDTH, SCR_HEIGHT);
-		scatterBuffer.generate(GL_RGBA);
+		Texture2D scatterTexture(GL_RGBA16F, GL_FLOAT);
+		scatterTexture.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
+		scatterBuffer.attachBuffer(scatterTexture.ID, GL_TEXTURE_2D);
+		RenderBufferStorage scatterRBO(SCR_WIDTH, SCR_HEIGHT);
+		scatterBuffer.attachBuffer(scatterRBO.ID, GL_RENDERBUFFER);
 
 		// image space SSS calc
 		// --------------------
 	
 		// compute dipole approx table
-		float mScattering = 0.5;
+		float mScattering = 0.8;
 		float mAbsorption = 0.5;
 		float mRri = 2.5;
 		float mMeanCosine = 0.0;
 		glm::vec3 mAlbedo(0.0, 0.8, 0.3);
 		SSSMaterial SSSMat(mAlbedo, mScattering, mAbsorption, mRri, mMeanCosine);
-		std::vector<float> dipole_lookup = getDipoleDistribution(SSSMat);
+		std::vector<float> dipoleLookup = getDipoleDistribution(SSSMat);
 		// dipole[i] = R_d(i / 10)	
-		float maxDistance = dipole_lookup.size() / 10.0f;
+		float maxDistance = dipoleLookup.size() / 10.0f;
 		std::cout << "maxDistance: " << maxDistance << std::endl;
 		// store in 1D texture
 		
-		std::cout << "dipole lookup (length " << dipole_lookup.size() << "): ";
-		for (float i : dipole_lookup)
+		std::cout << "dipole lookup (length " << dipoleLookup.size() << "): ";
+		for (float i : dipoleLookup)
 		{
 			std::cout << i << ",";
 		}
 		std::cout <<"\n";
+		Texture2D dipoleLookupTex(GL_R32F, GL_FLOAT);
+		dipoleLookupTex.setWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
+		dipoleLookupTex.generate(dipoleLookup.size(), 1, &dipoleLookup[0]);
 
     // render loop
     // -----------
@@ -196,7 +205,8 @@ int main()
         lastFrame = currentFrame;
 				glm::vec3 lastCamPos;
 				float time = glfwGetTime();
-				//light.setPos(glm::vec3(4.5 * cos(time), light.position.y, 4.5 * sin(time)));
+				float radius = 4.5f;
+				light.setPos(glm::vec3(radius * cos(time), light.position.y, radius* sin(time)));
 				//camera.setPos(glm::vec3(3.0  + 2 * cos(time), camera.worldPos.y, camera.worldPos.z));
 
 				glEnable(GL_DEPTH_TEST);
@@ -243,6 +253,7 @@ int main()
 				}
 				lastCamPos = camera.worldPos;
 				
+				// setting splatShader uniforms 
 				splatShader.use();
 				glActiveTexture(GL_TEXTURE0);
 				splatPositions.bind();
@@ -250,29 +261,45 @@ int main()
 				splatNormals.bind();
 				glActiveTexture(GL_TEXTURE2);
 				gWorldPositions.bind();
+				glActiveTexture(GL_TEXTURE3);
+				dipoleLookupTex.bind();
 
+				splatShader.setVec2("windowSize", glm::vec2(SCR_WIDTH, SCR_HEIGHT));
+				splatShader.setVec3("viewPos", camera.worldPos);
 				splatShader.setInt("splatPositions", 0);	
 				splatShader.setInt("splatNormals", 1);
 				splatShader.setInt("viewPositions", 2);
+				splatShader.setInt("dipoleLookup", 3);
 				splatShader.setInt("splatResolution", SPLAT_RES);	
-				splatShader.setInt("maxDistance", dipole_lookup.size());
+				splatShader.setInt("maxDistance", dipoleLookup.size());
 
 				SSSMat.setUniforms(splatShader);
 				light.setUniforms(splatShader);
 
+				// drawing splats
 				glBindVertexArray(quadVAO);
-				glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, SPLAT_RES*SPLAT_RES);
+				glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, (SPLAT_RES*SPLAT_RES));
 
+
+				// render scattering to object + specular
+				// -------------------------------------- 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glEnable(GL_DEPTH_TEST);
+				glDisable(GL_BLEND);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 				scatterShader.use();
 				
-				glDisable(GL_BLEND);
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, scatterBuffer.getAttachment(GL_COLOR_ATTACHMENT0));
 				scatterShader.setInt("scatterTexture", 0);
 				scatterShader.setVec2("windowSize", glm::vec2(SCR_WIDTH, SCR_HEIGHT));
 				SSSMat.setUniforms(scatterShader);
 				cube.draw(scatterShader);
+
+				lightShader.use();
+				light.setUniforms(lightShader);
+				light.draw(lightShader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -427,7 +454,7 @@ void orientQuad(Camera& camera, unsigned int quadVBO, float size)
 
 float dipoleDistribution(float r, float pAlpha, float sigma_tr, float z_r, float z_v)
 {
-		r /= 10;
+		r /= 10.0;
 		
 		float d_r = sqrt(pow(r, 2) + pow(z_r, 2));
 		float d_v = sqrt(pow(r, 2) + pow(z_v, 2));
