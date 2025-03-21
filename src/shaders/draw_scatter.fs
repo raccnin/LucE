@@ -26,7 +26,9 @@ out vec4 FragColor;
 
 uniform sampler2D scatterTexture;
 uniform vec2 windowSize;
+uniform vec3 viewPos;
 uniform Material material;
+uniform SpotLight light;
 
 const float GAMMA = 2.2;
 
@@ -37,11 +39,10 @@ in VS_OUT {
 		vec4 LightSpacePos;
 } fs_in;
 
-
-
 void main()
 {
-	vec3 ambient = 0.01 * material.albedo;
+	vec3 ambient = light.ambient * material.albedo * 0.1;
+
 	vec3 scatterContribution = texture(scatterTexture, gl_FragCoord.xy / windowSize).rgb;	
 	scatterContribution *= material.albedo;
 

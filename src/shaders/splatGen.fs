@@ -75,13 +75,13 @@ float multiScatter(vec3 x_i, vec3 w_i, vec3 x_o, vec3 w_o)
 	float r = distance(x_o, x_i);
 	// dipoleLookup[i] == R_d(i/10)
 	// if wanting to get R_d at r, dipoleLookup[r*10.0]
-	if (r > maxDistance / 10.0)
+	if (r > maxDistance / 100.0)
 	{
 		return 0.0;
 	}
 	else
 	{
-		int dipoleIndex = int(r * 10); 
+		int dipoleIndex = int(r * 100); 
 		float R_d = texture(dipoleLookup, vec2(dipoleIndex, 0) / maxDistance).r;
 		float incidentTheta = max(0.0, dot(fs_in.splatNormal, x_i));
 		float outgoingTheta = max(0.0, dot(fs_in.splatNormal, x_o));

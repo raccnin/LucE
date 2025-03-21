@@ -33,7 +33,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
-const unsigned int SPLAT_RES = 128;
+const unsigned int SPLAT_RES = 256;
 
 const float PI = 3.141;
 const float E = 2.718;
@@ -43,7 +43,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(-3.0f, 3.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 1.0f, 3.0f));
 
 
 int main()
@@ -99,7 +99,6 @@ int main()
     //Model backpack((objDir + "/backpack/backpack.obj"));
 		//Model angel((objDir + "/statue/statue.obj"));
 		Model sphere((objDir + "/sphere/sphere.obj"));
-		sphere.uniformScale(10.0f);
 		Model cube((objDir + "/cube/cube.obj"));
     std::cout << "Loaded Models\n"; 
 		unsigned int quadVAO, quadVBO;
@@ -112,13 +111,14 @@ int main()
 
 		// light config
 		// ------------
-		glm::vec3 lightPos = glm::vec3(1.5f, 1.5f, 1.8f);
+		glm::vec3 lightPos = glm::vec3(1.5f, 0.5f, 1.8f);
 		glm::vec3 lightColour = glm::vec3(1.0f);
-		std::string lightModelPath = (objDir + "/sphere/sphere.obj");
-		float spotlightInnerCutoff = cos(glm::radians(20.0f));
-		float spotlightOuterCutoff = cos(glm::radians(50.0f));
+		const float radius = 3.5f;
+		std::string lightModelPath = (objDir + "/lightball/sphere.obj");
+		float spotlightInnerCutoff = cos(glm::radians(10.0f));
+		float spotlightOuterCutoff = cos(glm::radians(10.0f));
     SpotLight light(lightPos, lightColour, lightModelPath.c_str(), 
-										scene[0]->worldPos + glm::vec3(0.0, 0.5, 0.0), spotlightInnerCutoff, spotlightOuterCutoff);
+										scene[0]->worldPos + glm::vec3(0.0, 0.0, 0.0), spotlightInnerCutoff, spotlightOuterCutoff);
 
 
     // shader config
@@ -172,14 +172,14 @@ int main()
 	
 		// compute dipole approx table
 		float mScattering = 1.0;
-		float mAbsorption = 0.0;
+		float mAbsorption = 0.1;
 		float mRri = 2.5;
 		float mMeanCosine = -0.5;
-		glm::vec3 mAlbedo(0.0, 0.8, 0.3);
+		glm::vec3 mAlbedo(0.1, 0.8, 0.3);
 		SSSMaterial SSSMat(mAlbedo, mScattering, mAbsorption, mRri, mMeanCosine);
 		std::vector<float> dipoleLookup = getDipoleDistribution(SSSMat);
 		// dipole[i] = R_d(i / 10)	
-		float maxDistance = dipoleLookup.size() / 10.0f;
+		float maxDistance = dipoleLookup.size() / 100.0f;
 		std::cout << "maxDistance: " << maxDistance << std::endl;
 		// store in 1D texture
 		
@@ -207,7 +207,6 @@ int main()
         lastFrame = currentFrame;
 				glm::vec3 lastCamPos;
 				float time = glfwGetTime();
-				const float radius = 3.5f;
 				light.setPos(glm::vec3(radius * cos(time), light.position.y, radius* sin(time)));
 				//camera.setPos(glm::vec3(3.0  + 2 * cos(time), camera.worldPos.y, camera.worldPos.z));
 
@@ -297,11 +296,17 @@ int main()
 				scatterShader.setInt("scatterTexture", 0);
 				scatterShader.setVec2("windowSize", glm::vec2(SCR_WIDTH, SCR_HEIGHT));
 				SSSMat.setUniforms(scatterShader);
+				light.setUniforms(scatterShader);
+				scatterShader.setVec3("viewPos", camera.worldPos);
 				scene[0]->draw(scatterShader);
 
 				lightShader.use();
 				light.setUniforms(lightShader);
 				light.draw(lightShader);
+
+
+				//TODO: make neat visualisation? all passes below final image?
+				// render 3 quads (splatMap, cameraPositions, scatterTexture)
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -456,7 +461,7 @@ void orientQuad(Camera& camera, unsigned int quadVBO, float size)
 
 float dipoleDistribution(float r, float pAlpha, float sigma_tr, float z_r, float z_v)
 {
-		r /= 10.0;
+		r /= 100.0;
 		
 		float d_r = sqrt(pow(r, 2) + pow(z_r, 2));
 		float d_v = sqrt(pow(r, 2) + pow(z_v, 2));
