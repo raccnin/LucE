@@ -12,8 +12,8 @@ in VS_OUT {
 	vec3 FragPos;
 	vec3 Normal;
 	vec2 TexCoord;
-	vec3 LightSpacePos;
-};
+	vec4 LightSpacePos;
+} fs_in;
 
 out vec4 FragColor;
 

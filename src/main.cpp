@@ -16,8 +16,8 @@
 
 #include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO);
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
 void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader, bool depthPass = false);
@@ -33,7 +33,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
-const unsigned int SPLAT_RES = 256;
+const unsigned int SPLAT_RES = 128;
 
 const float PI = 3.141;
 const float E = 2.718;
@@ -43,8 +43,10 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // camera
-Camera camera(glm::vec3(0.0f, 1.0f, 3.0f));
-
+Camera camera(glm::vec3(0.0f, 1.0f, 5.0f));
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
+bool firstMouse = true;
 
 int main()
 {
@@ -61,8 +63,9 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouseCallback);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -78,7 +81,8 @@ int main()
     // compile shader programs
     // -----------------------
 		// TODO: must change this resource manager it's so bad good lord
-    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    //std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
     Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_sss.fs").c_str());
     Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
 		Shader lightShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/light_frag.fs").c_str());
@@ -89,8 +93,8 @@ int main()
 
     // object config
     // -------------
-    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    //std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
+    //std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
+    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
     /*
     Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
     Model cube((objDir + "/cube/cube.obj"), cubeMat);
@@ -205,7 +209,6 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-				glm::vec3 lastCamPos;
 				float time = glfwGetTime();
 				light.setPos(glm::vec3(radius * cos(time), light.position.y, radius* sin(time)));
 				//camera.setPos(glm::vec3(3.0  + 2 * cos(time), camera.worldPos.y, camera.worldPos.z));
@@ -248,11 +251,7 @@ int main()
 
 				// orient quad to be perependicular to camera
 				
-				if (camera.worldPos != lastCamPos)
-				{
-					orientQuad(camera, quadVBO, 0.5);
-				}
-				lastCamPos = camera.worldPos;
+				orientQuad(camera, quadVBO, 0.5);
 				
 				// setting splatShader uniforms 
 				splatShader.use();
@@ -322,18 +321,18 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.processKeyboard(FORWARD, deltaTime);
+	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.processKeyboard(BACKWARD, deltaTime);
+	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.processKeyboard(LEFT, deltaTime);
+	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.processKeyboard(RIGHT, deltaTime);
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
 
 void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO)
 {
@@ -374,35 +373,35 @@ void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO)
 
 void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf)
 {
-        glBindFramebuffer(GL_READ_BUFFER, readBuf.ID);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawBuf.ID);
-        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-        glBindFramebuffer(GL_READ_BUFFER, 0);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_BUFFER, readBuf.ID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawBuf.ID);
+	glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_READ_BUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 }
 
 void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Light &light, Shader &shader, bool depthPass)
 {
-    shader.use();
-		light.setUniforms(shader);
-    for(unsigned int i = 0; i < nModels; i++)
-    {
-        models[i]->draw(shader);
-    }
-    glUseProgram(0);
+	shader.use();
+	light.setUniforms(shader);
+	for(unsigned int i = 0; i < nModels; i++)
+	{
+		models[i]->draw(shader);
+	}
+	glUseProgram(0);
 }
 
 void drawQuad(unsigned int quadVAO, unsigned int textureID, Shader &shader)
 {
-        shader.use();
-				glActiveTexture(GL_TEXTURE0);
-				shader.setInt("frameTexture", 0);
-				glBindTexture(GL_TEXTURE_2D, textureID);
-        glBindVertexArray(quadVAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-        glUseProgram(0);
+	shader.use();
+	glActiveTexture(GL_TEXTURE0);
+	shader.setInt("frameTexture", 0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glBindVertexArray(quadVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+	glUseProgram(0);
 }
 
 GLFWwindow* setup_window( unsigned const int scr_width, unsigned const int scr_height, std::string &title)
@@ -419,6 +418,27 @@ GLFWwindow* setup_window( unsigned const int scr_width, unsigned const int scr_h
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title.c_str(), NULL, NULL);
 	return window;
 
+}
+
+void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
+{
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.processMouse(xoffset, yoffset);
 }
 
 void setShaderUniforms(Shader &shader)
