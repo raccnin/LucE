@@ -21,13 +21,7 @@ glm::mat4 Camera::getViewMatrix()
 
 void Camera::lookAt(glm::vec3 targetPos)
 {
-    this->targetPos = targetPos;
-    updateVectors();
-}
-
-void Camera::lookAt(float x, float y, float z)
-{
-    this->targetPos = glm::vec3(x, y, z);
+		glm::vec3 direction = normalize(targetPos - worldPos);
     updateVectors();
 }
 

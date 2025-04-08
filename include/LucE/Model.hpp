@@ -16,31 +16,6 @@ struct Material
 	glm::vec3 albedo;
 };
 
-class SSSMaterial
-{
-public:
-	glm::vec3 albedo;	
-
-	float scattering;
-	float absorption;
-	float meanCosine;
-	float rri;
-
-	SSSMaterial(glm::vec3 albedo, float scattering, float absorption, float rri, float meanCosine)
-	: scattering(scattering), absorption(absorption),  meanCosine(meanCosine), rri(rri), albedo(albedo)
-	{
-	}
-
-	void setUniforms(Shader& shader)
-	{
-		shader.setVec3("material.albedo", albedo);
-
-		shader.setFloat("material.scattering", scattering);
-		shader.setFloat("material.absorption", absorption);
-		shader.setFloat("material.meanCosine", meanCosine);
-		shader.setFloat("material.rri", rri);
-	}
-};
 
 unsigned int TextureFromFile(const char* path, const std::string &directory);
 
@@ -80,7 +55,6 @@ class Model
             this->orientAngle = angle;
         }
     private:
-        Material material;
         glm::vec3 scale;
         float orientAngle;
         glm::vec3 orientAxis;

@@ -1,11 +1,4 @@
-#include "LucE/Light.hpp"
-#include <LucE/Camera.hpp>
-#include <LucE/Shader.hpp>
-#include <LucE/Mesh.hpp>
-#include <LucE/Model.hpp>
-#include <LucE/Buffers.hpp>
-#include <LucE/Texture.hpp>
-
+#include <LucE/LucE.hpp>
 
 #include <glad.h>
 #include <GLFW/glfw3.h>
@@ -19,12 +12,8 @@
 void processInput(GLFWwindow *window);
 void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO);
-void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf);
 void drawScene(Model* models[], unsigned int nModels, Light &light, Shader &shader, bool depthPass = false);
-void drawQuad(unsigned int quadVAO, unsigned int textureID, Shader &shader);
 GLFWwindow* setup_window(unsigned const int scr_width, unsigned const int scr_height, std::string &title);
-void setShaderUniforms(Shader &shader);
-void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels);
 std::vector<float> getDipoleDistribution(SSSMaterial& material);
 void orientQuad(Camera& camera, unsigned int quadVBO, float size);
 
@@ -35,6 +24,7 @@ const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
 const unsigned int SPLAT_RES = 128;
 
+// math constants
 const float PI = 3.141;
 const float E = 2.718;
 
@@ -74,42 +64,24 @@ int main()
         return -1;
     }    
 
-    // OpenGL global states
-    // --------------------
-    glEnable(GL_DEPTH_TEST);
-
     // compile shader programs
     // -----------------------
-		// TODO: must change this resource manager it's so bad good lord
-    //std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
-    std::string shaderDir = "/home/shalash/Repos/Diss24/engine/src/shaders";
-    Shader shader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/spotlight_sss.fs").c_str());
-    Shader frameShader = Shader((shaderDir+"/pass_through.vs").c_str(), (shaderDir+"/tonemap.fs").c_str());
+    std::string shaderDir = "/home/pailiah/Repos/Diss24/Engine/src/shaders";
+
 		Shader lightShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/light_frag.fs").c_str());
 		Shader gBufShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/gBufMap.fs").c_str());
 		Shader splatShader = Shader((shaderDir+"/splatGen.vs").c_str(), (shaderDir+"/splatGen.fs").c_str());
 		Shader scatterShader = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/draw_scatter.fs").c_str());
-		Shader dipoleDebug = Shader((shaderDir+"/shader3D_base.vs").c_str(), (shaderDir+"/draw_dipole.fs").c_str());
 
     // object config
     // -------------
-    //std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
-    std::string objDir = "/home/shalash/Repos/Diss24/engine/assets";
-    /*
-    Material cubeMat = {glm::vec3(0.1f), glm::vec3(0.2f), glm::vec3(0.3f), 1.0f};
-    Model cube((objDir + "/cube/cube.obj"), cubeMat);
-    Model angel((objDir + "/statue/angel.obj"), cubeMat);
-    */
-    //Model backpack((objDir + "/backpack/backpack.obj"));
-		//Model angel((objDir + "/statue/statue.obj"));
+    std::string objDir = "/home/pailiah/Repos/Diss24/Engine/assets";
 		Model sphere((objDir + "/sphere/sphere.obj"));
 		Model cube((objDir + "/cube/cube.obj"));
     std::cout << "Loaded Models\n"; 
 		unsigned int quadVAO, quadVBO;
 		makeQuad(quadVAO, quadVBO);
 		
-
-
     Model* scene[] = {&sphere};
 
 
@@ -127,7 +99,7 @@ int main()
 
     // shader config
     // -------------
-    camera.lookAt(0.0f, 0.0f, 0.0f);
+    camera.lookAt(glm::vec3(0.0f));
     glm::mat4 view = camera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 1000.0f);
@@ -135,14 +107,11 @@ int main()
 
     UniformMat4Buf Matrices("Matrices", mats, sizeof(mats), 0);
 		//Matrices.fillIdx(VIEW, light.getViewMatrix());
-    shader.use();
-    shader.setBlockBinding(Matrices.name, Matrices.bindIdx);
-
-    frameShader.use();
-    frameShader.setInt("frameTexture", 0);
 
     // framebuffers (Post-Processing)
     // -----------------------------
+
+		// framebuffer for light-perspective
 		Framebuffer splatBuffer(SPLAT_RES, SPLAT_RES);
 		Texture2D splatPositions(GL_RGBA16F, GL_FLOAT);
 		Texture2D splatNormals(GL_RGBA16F, GL_FLOAT);
@@ -157,6 +126,8 @@ int main()
 		RenderBufferStorage splatRBO(SPLAT_RES, SPLAT_RES);
 		splatBuffer.attachBuffer(splatRBO.ID, GL_RENDERBUFFER);
 
+	
+		// framebuffer for camera-perspective
 		Framebuffer gBuffer(SCR_WIDTH, SCR_HEIGHT);
 		Texture2D gWorldPositions(GL_RGBA16F, GL_FLOAT);
 		gWorldPositions.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
@@ -164,6 +135,8 @@ int main()
 		RenderBufferStorage gRBO(SCR_WIDTH, SCR_HEIGHT);
 		gBuffer.attachBuffer(gRBO.ID, GL_RENDERBUFFER);
 
+
+		// framebuffer for scatter texture
 		Framebuffer scatterBuffer(SCR_WIDTH, SCR_HEIGHT);
 		Texture2D scatterTexture(GL_RGBA16F, GL_FLOAT);
 		scatterTexture.generate(SCR_WIDTH, SCR_HEIGHT, NULL);
@@ -185,14 +158,7 @@ int main()
 		// dipole[i] = R_d(i / 10)	
 		float maxDistance = dipoleLookup.size() / 100.0f;
 		std::cout << "maxDistance: " << maxDistance << std::endl;
-		// store in 1D texture
-		
-		std::cout << "dipole lookup (length " << dipoleLookup.size() << "): ";
-		for (float i : dipoleLookup)
-		{
-			std::cout << i << ",";
-		}
-		std::cout <<"\n";
+		// store in texture
 		Texture2D dipoleLookupTex(GL_R32F, GL_FLOAT);
 		dipoleLookupTex.setWrap(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
 		dipoleLookupTex.generate(dipoleLookup.size(), 1, &dipoleLookup[0]);
@@ -371,16 +337,6 @@ void makeQuad(unsigned int &quadVAO, unsigned int &quadVBO)
     glBindVertexArray(0);
 }
 
-void blitBuffers(msFramebuffer const &readBuf, Framebuffer const &drawBuf)
-{
-	glBindFramebuffer(GL_READ_BUFFER, readBuf.ID);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawBuf.ID);
-	glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_READ_BUFFER, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-}
-
 void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Light &light, Shader &shader, bool depthPass)
 {
 	shader.use();
@@ -389,18 +345,6 @@ void drawScene(Model* models[] /* array of pointers */, unsigned int nModels, Li
 	{
 		models[i]->draw(shader);
 	}
-	glUseProgram(0);
-}
-
-void drawQuad(unsigned int quadVAO, unsigned int textureID, Shader &shader)
-{
-	shader.use();
-	glActiveTexture(GL_TEXTURE0);
-	shader.setInt("frameTexture", 0);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glBindVertexArray(quadVAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
 	glUseProgram(0);
 }
 
@@ -439,24 +383,6 @@ void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
     lastY = ypos;
 
     camera.processMouse(xoffset, yoffset);
-}
-
-void setShaderUniforms(Shader &shader)
-{
-	shader.setVec3("viewPos", camera.worldPos);
-}
-
-void renderToDepth(Framebuffer &depthBuffer, Shader &depthShader, SpotLight &light, Model* scene[], int nModels)
-{
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-	depthBuffer.use();
-	depthShader.use();
-	glClear(GL_DEPTH_BUFFER_BIT);
-	depthShader.setMat4("lightTransform", light.getTransformMatrix());
-	drawScene(scene, nModels, light, depthShader);
-	// reset
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 }
 
 void orientQuad(Camera& camera, unsigned int quadVBO, float size)

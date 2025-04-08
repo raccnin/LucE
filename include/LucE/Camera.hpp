@@ -14,6 +14,9 @@ enum Camera_Direction
 class Camera
 {
 public:
+	glm::vec3 up;    
+	glm::vec3 right;
+	glm::vec3 worldPos;
 
 	Camera(glm::vec3 worldPos, glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 targetPos = glm::vec3(0.0f));
 	glm::mat4 getViewMatrix();
@@ -23,14 +26,10 @@ public:
 	glm::vec3 getTarget(){
 		return this->targetPos;
 	}
-	glm::vec3 up;    
-	glm::vec3 right;
-	glm::vec3 worldPos;
 	void processKeyboard(Camera_Direction dir, float deltaTime);
 	void processMouse(float xoffset, float yoffset , bool constrainPitch = true);
 
 protected:
-
 	glm::vec3 targetPos;
 	glm::vec3 worldUp;
 	glm::vec3 front;
@@ -38,6 +37,7 @@ protected:
 	float pitch;
 	float speed;
 	float sensitivity;
+
 	void updateVectors();
 };
 #endif
